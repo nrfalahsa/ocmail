@@ -1,0 +1,12 @@
+name = "ocmail-worker"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+# Binding KV Namespace EMAILS
+[[kv_namespaces]]
+binding = "EMAILS"
+id = "<GANTI_DENGAN_KV_NAMESPACE_ID_ANDA>"
+
+# Opsional: Secret jika ingin mengamankan API Worker
+# [vars]
+# WORKER_SECRET = "secret-token-anda"
