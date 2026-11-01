@@ -82,12 +82,18 @@ export async function getWorkerMessages(address: string): Promise<MailMessage[]>
   // Attach extracted OTP and parsed HTML/text
   return rawMessages.map((msg) => {
     const parsed = parseRawEmail(msg.body);
+    const friendlyFrom =
+      parsed.from ||
+      (msg.from && !msg.from.startsWith("bounces+") ? msg.from : msg.from);
+
     return {
       ...msg,
+      from: friendlyFrom,
+      subject: parsed.subject || msg.subject,
       html: parsed.html,
       text: parsed.text,
       isHtml: parsed.isHtml,
-      otp: extractOtp(msg.subject, msg.body),
+      otp: extractOtp(parsed.subject || msg.subject, msg.body),
     };
   });
 }

@@ -23,6 +23,8 @@ function decodeBase64(str: string): string {
 }
 
 export interface ParsedEmail {
+  from?: string;
+  subject?: string;
   html: string;
   text: string;
   isHtml: boolean;
@@ -40,6 +42,13 @@ export function parseRawEmail(rawBody: string): ParsedEmail {
     headerSection = rawBody.slice(0, doubleNewlineMatch.index);
     bodySection = rawBody.slice(doubleNewlineMatch.index + doubleNewlineMatch[0].length);
   }
+
+  // Extract display from header if available
+  const fromMatch = headerSection.match(/^from:\s*([^\r\n]+)/im);
+  const parsedFrom = fromMatch ? fromMatch[1].trim() : undefined;
+
+  const subjectMatch = headerSection.match(/^subject:\s*([^\r\n]+)/im);
+  const parsedSubject = subjectMatch ? subjectMatch[1].trim() : undefined;
 
   // Check Content-Type & Transfer-Encoding
   const contentTypeMatch = headerSection.match(/content-type:\s*([^;\r\n]+)/i);
@@ -87,10 +96,10 @@ export function parseRawEmail(rawBody: string): ParsedEmail {
     }
 
     if (foundHtml) {
-      return { html: sanitizeHtml(foundHtml), text: foundText || stripTags(foundHtml), isHtml: true };
+      return { from: parsedFrom, subject: parsedSubject, html: sanitizeHtml(foundHtml), text: foundText || stripTags(foundHtml), isHtml: true };
     }
     if (foundText) {
-      return { html: "", text: foundText, isHtml: false };
+      return { from: parsedFrom, subject: parsedSubject, html: "", text: foundText, isHtml: false };
     }
   }
 
@@ -105,6 +114,8 @@ export function parseRawEmail(rawBody: string): ParsedEmail {
   const isHtml = contentType.includes("text/html") || /<html[\s>]|<body[\s>]|<!doctype/i.test(decodedBody);
 
   return {
+    from: parsedFrom,
+    subject: parsedSubject,
     html: isHtml ? sanitizeHtml(decodedBody) : "",
     text: isHtml ? stripTags(decodedBody) : decodedBody,
     isHtml,

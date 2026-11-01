@@ -5,7 +5,7 @@ export default {
   // 1. Capture incoming email from Cloudflare Email Routing
   async email(message, env, ctx) {
     const to = (message.to || "").toLowerCase().replace(/^<|>$/g, "").trim();
-    const from = message.from || "unknown@sender";
+    const from = message.headers.get("from") || message.from || "unknown@sender";
     const subject = message.headers.get("subject") || "(No Subject)";
     const date = message.headers.get("date") || new Date().toISOString();
     const rawBody = await new Response(message.raw).text();
