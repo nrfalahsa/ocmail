@@ -40,31 +40,11 @@ export async function createWorkerInbox(prefix?: string, domain?: string): Promi
     }
   }
 
-  // Fallback simulation
+  // Fallback simulation (kosong, tanpa dummy email)
   const safePrefix = prefix
     ? prefix.trim().toLowerCase().replace(/[^a-z0-9._-]/g, "")
     : "ocm_" + Math.random().toString(36).substring(2, 10);
   const address = `${safePrefix}@${targetDomain}`.toLowerCase();
-
-  // Populate an initial welcome email in simulation mode
-  if (!localMockStorage.has(address)) {
-    localMockStorage.set(address, [
-      {
-        id: "msg_welcome_" + Date.now(),
-        to: address,
-        from: "system@ocmail.me",
-        subject: "Welcome to ocmail! Your verification code is 849-204",
-        date: new Date().toISOString(),
-        body: `Hello!
-
-Your ocmail inbox is active.
-Your verification code is: 849-204
-
-Thank you for using ocmail.`,
-        received_at: Date.now(),
-      },
-    ]);
-  }
 
   return { address, prefix: safePrefix, domain: targetDomain };
 }
