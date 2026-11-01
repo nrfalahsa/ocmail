@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { authenticateRequest } from "@/lib/api-guard";
 import { getWorkerMessages } from "@/lib/cf-client";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
@@ -7,8 +9,23 @@ export async function GET(
 ) {
   const { address } = await context.params;
   const cleanAddr = decodeURIComponent(address).toLowerCase().trim();
+  const authCtx = await authenticateRequest(req);
 
   try {
+    // Check ownership if inbox is registered to a user
+    const dbInbox = await prisma.inbox.findUnique({
+      where: { address: cleanAddr },
+    }).catch(() => null);
+
+    if (dbInbox && dbInbox.userId) {
+      if (!authCtx.userId || (dbInbox.userId !== authCtx.userId && authCtx.role !== "ADMIN")) {
+        return NextResponse.json(
+          { error: "Forbidden: Anda tidak memiliki akses ke inbox ini." },
+          { status: 403 }
+        );
+      }
+    }
+
     const messages = await getWorkerMessages(cleanAddr);
     return NextResponse.json(messages, {
       headers: {

@@ -116,6 +116,9 @@ export default function HomePage() {
         if (useCustom) {
           setCustomPrefix("");
         }
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        alert(errData.error || "Gagal membuat inbox");
       }
     } catch (err) {
       console.error(err);
@@ -140,6 +143,9 @@ export default function HomePage() {
         } else if (list.length > 0) {
           setSelectedMessage(list[0]);
         }
+      } else if (res.status === 403) {
+        setMessages([]);
+        setSelectedMessage(null);
       }
     } catch (err) {
       console.error(err);

@@ -46,6 +46,22 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // 1. Check if custom address is already owned by another user
+    if (cleanPrefix) {
+      const existingInbox = await prisma.inbox.findUnique({
+        where: { address: `${cleanPrefix}@${chosenDomain}`.toLowerCase() },
+      }).catch(() => null);
+
+      if (existingInbox && existingInbox.userId) {
+        if (!authCtx.userId || (existingInbox.userId !== authCtx.userId && authCtx.role !== "ADMIN")) {
+          return NextResponse.json(
+            { error: "Alamat email ini sudah digunakan oleh pengguna lain. Silakan pilih prefix lain." },
+            { status: 409 }
+          );
+        }
+      }
+    }
+
     const workerResult = await createWorkerInbox(cleanPrefix, chosenDomain);
 
     // Save to DB if user is logged in
