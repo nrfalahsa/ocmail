@@ -36,16 +36,16 @@ curl https://ocmail.oneclash.xyz/api/domains`;
 curl -X POST https://ocmail.oneclash.xyz/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{"domain": "oneclash.xyz"}'
+  -d '{"domain": "oneclash.biz.id"}'
 
 # 2. Buat Alamat Kustom (Eksklusif terkunci ke akun Anda)
 curl -X POST https://ocmail.oneclash.xyz/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{"prefix": "mybot", "domain": "oneclash.xyz"}'`;
+  -d '{"prefix": "mybot", "domain": "oneclash.biz.id"}'`;
 
   const snippet3 = `# Ambil pesan & kode OTP otomatis
-curl https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.xyz/messages \\
+curl https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id/messages \\
   -H "Authorization: Bearer ocm_YOUR_KEY"`;
 
   const snippet4 = `# 1. Lihat daftar email milik Anda (Reuse)
@@ -53,7 +53,7 @@ curl https://ocmail.oneclash.xyz/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY"
 
 # 2. Hapus email dari akun & server
-curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.xyz \\
+curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id \\
   -H "Authorization: Bearer ocm_YOUR_KEY"`;
 
   useEffect(() => {
