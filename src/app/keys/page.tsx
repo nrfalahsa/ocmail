@@ -30,30 +30,30 @@ export default function ApiKeysPage() {
   }
 
   const snippet1 = `# Ambil domain aktif yang tersedia
-curl https://your-ocmail.vercel.app/api/domains`;
+curl https://ocmail.vercel.app/api/domains`;
 
   const snippet2 = `# 1. Buat Alamat Random
-curl -X POST https://your-ocmail.vercel.app/api/v1/inboxes \\
+curl -X POST https://ocmail.vercel.app/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"domain": "oneclash.xyz"}'
 
 # 2. Buat Alamat Kustom (Eksklusif terkunci ke akun Anda)
-curl -X POST https://your-ocmail.vercel.app/api/v1/inboxes \\
+curl -X POST https://ocmail.vercel.app/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"prefix": "mybot", "domain": "oneclash.xyz"}'`;
 
   const snippet3 = `# Ambil pesan & kode OTP otomatis
-curl https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz/messages \\
+curl https://ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz/messages \\
   -H "Authorization: Bearer ocm_YOUR_KEY"`;
 
   const snippet4 = `# 1. Lihat daftar email milik Anda (Reuse)
-curl https://your-ocmail.vercel.app/api/v1/inboxes \\
+curl https://ocmail.vercel.app/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY"
 
 # 2. Hapus email dari akun & server
-curl -X DELETE https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz \\
+curl -X DELETE https://ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz \\
   -H "Authorization: Bearer ocm_YOUR_KEY"`;
 
   useEffect(() => {
@@ -221,7 +221,7 @@ curl -X DELETE https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz 
         </div>
         {keys.length === 0 ? (
           <div className="p-8 text-center text-sm text-zinc-500">
-            Belum ada API Key. Buat yang pertama di atas.
+            Belum ada API Key.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -298,7 +298,7 @@ curl -X DELETE https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz 
               </button>
             </div>
             <pre className="p-3 rounded-lg bg-black/90 border border-zinc-800/80 text-xs font-mono text-zinc-300 overflow-x-auto">
-{snippet1}
+              {snippet1}
             </pre>
             <p className="text-[11px] text-zinc-500">
               Response: <code>{`{"domains": ["oneclash.xyz", "ocmail.me"]}`}</code>
@@ -319,7 +319,7 @@ curl -X DELETE https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz 
               </button>
             </div>
             <pre className="p-3 rounded-lg bg-black/90 border border-zinc-800/80 text-xs font-mono text-zinc-300 overflow-x-auto">
-{snippet2}
+              {snippet2}
             </pre>
             <p className="text-[11px] text-zinc-500">
               Status <code>201 Created</code>. Prefix yang dibuat otomatis terikat ke akun API Key Anda.
@@ -340,7 +340,7 @@ curl -X DELETE https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz 
               </button>
             </div>
             <pre className="p-3 rounded-lg bg-black/90 border border-zinc-800/80 text-xs font-mono text-zinc-300 overflow-x-auto">
-{snippet3}
+              {snippet3}
             </pre>
             <p className="text-[11px] text-zinc-500">
               Response berupa array pesan. Field <code>&quot;otp&quot;: &quot;123456&quot;</code> terisi otomatis jika ditemukan kode verifikasi.
@@ -361,7 +361,7 @@ curl -X DELETE https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz 
               </button>
             </div>
             <pre className="p-3 rounded-lg bg-black/90 border border-zinc-800/80 text-xs font-mono text-zinc-300 overflow-x-auto">
-{snippet4}
+              {snippet4}
             </pre>
             <p className="text-[11px] text-zinc-500">
               <code>GET /api/v1/inboxes</code> mengambil daftar email milik Anda untuk dipakai ulang.
