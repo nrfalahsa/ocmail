@@ -47,6 +47,18 @@ export function Navbar() {
               API Keys
             </NextLink>
 
+            <NextLink
+              href="/rules"
+              className={`px-3.5 py-1.5 rounded-lg transition flex items-center gap-2 ${
+                pathname === "/rules"
+                  ? "bg-zinc-800 text-white"
+                  : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+              }`}
+            >
+              <ShieldCheck className="h-4 w-4" />
+              Aturan & Keamanan
+            </NextLink>
+
             {isAdmin && (
               <NextLink
                 href="/admin"

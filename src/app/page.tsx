@@ -13,6 +13,8 @@ import {
   CheckCircle,
   FileText,
   Eye,
+  AlertCircle,
+  X
 } from "lucide-react";
 
 interface Message {
@@ -44,6 +46,7 @@ export default function HomePage() {
   const [viewTab, setViewTab] = useState<"preview" | "raw">("preview");
   const [lastChecked, setLastChecked] = useState<string>("");
   const [mounted, setMounted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -113,12 +116,13 @@ export default function HomePage() {
         localStorage.setItem("ocmail_active_inbox", data.address);
         setMessages([]);
         setSelectedMessage(null);
+        setErrorMessage(null);
         if (useCustom) {
           setCustomPrefix("");
         }
       } else {
         const errData = await res.json().catch(() => ({}));
-        alert(errData.error || "Gagal membuat inbox");
+        setErrorMessage(errData.error || "Gagal membuat inbox. Silakan coba lagi.");
       }
     } catch (err) {
       console.error(err);
@@ -183,6 +187,30 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
+      {/* Interactive Custom Error Notification */}
+      {errorMessage && (
+        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/30 flex items-start justify-between gap-3 animate-in fade-in">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
+            <div className="space-y-1">
+              <div className="text-xs font-semibold text-red-300">Peringatan Alamat Email</div>
+              <div className="text-xs text-red-200/90 leading-relaxed">{errorMessage}</div>
+              <div className="pt-1">
+                <a href="/rules" className="text-[11px] font-medium text-red-400 hover:text-red-300 underline">
+                  Pelajari aturan kepemilikan inbox &rarr;
+                </a>
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => setErrorMessage(null)}
+            className="p-1 rounded-md text-red-400 hover:text-red-300 hover:bg-red-900/40 transition"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       {/* Top Banner / Generator Card */}
       <div className="rounded-xl bg-zinc-900/50 p-5 sm:p-6 border border-zinc-800">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
