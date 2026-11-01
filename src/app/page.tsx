@@ -64,6 +64,8 @@ export default function HomePage() {
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [userInboxes, setUserInboxes] = useState<SavedInbox[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
   const domainDropdownRef = useRef<HTMLDivElement>(null);
@@ -116,9 +118,10 @@ export default function HomePage() {
     setSelectedMessage(null);
   }
 
-  async function handleDeleteSavedInbox(addr: string, e: React.MouseEvent) {
-    e.stopPropagation();
-    if (!confirm(`Hapus email ${addr} dari akun Anda?`)) return;
+  async function confirmDeleteInbox() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    const addr = deleteTarget;
     try {
       const res = await fetch(`/api/v1/inboxes/${encodeURIComponent(addr)}`, { method: "DELETE" });
       if (res.ok) {
@@ -130,6 +133,20 @@ export default function HomePage() {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setDeleting(false);
+      setDeleteTarget(null);
+    }
+  }
+
+  function requestDeleteInbox(addr: string, e?: React.MouseEvent) {
+    if (e) e.stopPropagation();
+    setDeleteTarget(addr);
+  }
+
+  async function handleDeleteCurrentInbox() {
+    if (activeAddress) {
+      requestDeleteInbox(activeAddress);
     }
   }
   useEffect(() => {
@@ -234,20 +251,6 @@ export default function HomePage() {
       console.error(err);
     } finally {
       if (!isSilent) setLoadingMessages(false);
-    }
-  }
-
-  async function handleDeleteCurrentInbox() {
-    if (!confirm(`Hapus inbox ${activeAddress}? Semua email di dalamnya akan hilang.`)) return;
-    try {
-      await fetch(`/api/v1/inboxes/${encodeURIComponent(activeAddress)}`, { method: "DELETE" });
-      localStorage.removeItem("ocmail_active_inbox");
-      setActiveAddress("");
-      setMessages([]);
-      setSelectedMessage(null);
-      handleCreateInbox(false);
-    } catch (err) {
-      console.error(err);
     }
   }
 
@@ -384,7 +387,7 @@ export default function HomePage() {
 
             <div className="flex flex-col sm:flex-row gap-2">
               {isCustomMode ? (
-                <div className="flex-1 flex items-center rounded-lg bg-zinc-900 border border-zinc-800 px-2.5 py-1.5 text-xs">
+                <div className="flex-1 rounded-lg bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-xs">
                   <input
                     type="text"
                     placeholder="nama-kamu"
@@ -392,7 +395,6 @@ export default function HomePage() {
                     onChange={(e) => setCustomPrefix(e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g, ""))}
                     className="w-full bg-transparent text-white font-mono placeholder-zinc-500 focus:outline-none"
                   />
-                  <span className="text-zinc-500 font-mono">@</span>
                 </div>
               ) : null}
 
@@ -709,20 +711,22 @@ export default function HomePage() {
                       </div>
 
                       <div className="flex items-center gap-1">
+                        {!isCurrent && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSelectSavedInbox(item);
+                            }}
+                            className="px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition"
+                            title="Gunakan email ini"
+                          >
+                            Gunakan
+                          </button>
+                        )}
                         <button
                           type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSelectSavedInbox(item);
-                          }}
-                          className="px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition"
-                          title="Gunakan email ini"
-                        >
-                          Gunakan
-                        </button>
-                        <button
-                          type="button"
-                          onClick={(e) => handleDeleteSavedInbox(item.address, e)}
+                          onClick={(e) => requestDeleteInbox(item.address, e)}
                           className="p-1.5 rounded-md text-zinc-500 hover:text-red-400 hover:bg-zinc-800 transition"
                           title="Hapus dari akun"
                         >
@@ -737,6 +741,47 @@ export default function HomePage() {
 
             <div className="p-3 bg-zinc-950/80 border-t border-zinc-800/80 text-[11px] text-zinc-500 text-center">
               Klik &quot;Gunakan&quot; untuk mengalihkan kotak masuk ke alamat tersebut.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Modal for Deletion */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-sm rounded-2xl bg-zinc-900 border border-zinc-800 shadow-2xl p-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0">
+                <Trash2 className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">Konfirmasi Hapus Email</h3>
+                <p className="text-[11px] text-zinc-400">Tindakan ini tidak dapat dibatalkan.</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-zinc-300 leading-relaxed">
+              Apakah Anda yakin ingin menghapus inbox{" "}
+              <strong className="font-mono text-white">{deleteTarget}</strong>? Seluruh pesan di dalamnya akan dibersihkan.
+            </p>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+                className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium transition"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteInbox}
+                disabled={deleting}
+                className="px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-medium transition disabled:opacity-50"
+              >
+                {deleting ? "Menghapus..." : "Hapus Sekarang"}
+              </button>
             </div>
           </div>
         </div>

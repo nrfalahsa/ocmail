@@ -8,13 +8,10 @@ export default function SignInPage() {
     <div className="min-h-[75vh] flex items-center justify-center">
       <div className="w-full max-w-md p-8 rounded-2xl bg-zinc-900/60 border border-zinc-800 shadow-2xl backdrop-blur">
         <div className="text-center mb-8">
-          <div className="inline-flex h-12 w-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 items-center justify-center text-white mb-4 shadow-lg shadow-cyan-500/20">
-            <Mail className="h-6 w-6" />
+          <div className="inline-flex h-10 w-10 rounded-xl bg-zinc-800 border border-zinc-700/80 items-center justify-center text-white mb-3">
+            <Mail className="h-5 w-5" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Masuk ke ocmail</h1>
-          <p className="text-sm text-zinc-400 mt-1">
-            Gunakan akun OAuth untuk mengelola inbox permanen dan API Key Anda.
-          </p>
+          <h1 className="text-xl font-bold tracking-tight text-white">Masuk ke ocmail</h1>
         </div>
 
         <div className="space-y-3">
@@ -52,10 +49,6 @@ export default function SignInPage() {
             </svg>
             Lanjutkan dengan GitHub
           </button>
-        </div>
-
-        <div className="mt-8 text-center text-xs text-zinc-500">
-          Admin otomatis terdeteksi via email konfigurasi server.
         </div>
       </div>
     </div>
