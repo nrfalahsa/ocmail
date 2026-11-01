@@ -30,30 +30,30 @@ export default function ApiKeysPage() {
   }
 
   const snippet1 = `# Ambil domain aktif yang tersedia
-curl https://ocmail.vercel.app/api/domains`;
+curl https://ocmail.oneclash.xyz/api/domains`;
 
   const snippet2 = `# 1. Buat Alamat Random
-curl -X POST https://ocmail.vercel.app/api/v1/inboxes \\
+curl -X POST https://ocmail.oneclash.xyz/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"domain": "oneclash.xyz"}'
 
 # 2. Buat Alamat Kustom (Eksklusif terkunci ke akun Anda)
-curl -X POST https://ocmail.vercel.app/api/v1/inboxes \\
+curl -X POST https://ocmail.oneclash.xyz/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"prefix": "mybot", "domain": "oneclash.xyz"}'`;
 
   const snippet3 = `# Ambil pesan & kode OTP otomatis
-curl https://ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz/messages \\
+curl https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.xyz/messages \\
   -H "Authorization: Bearer ocm_YOUR_KEY"`;
 
   const snippet4 = `# 1. Lihat daftar email milik Anda (Reuse)
-curl https://ocmail.vercel.app/api/v1/inboxes \\
+curl https://ocmail.oneclash.xyz/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY"
 
 # 2. Hapus email dari akun & server
-curl -X DELETE https://ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz \\
+curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.xyz \\
   -H "Authorization: Bearer ocm_YOUR_KEY"`;
 
   useEffect(() => {
@@ -301,7 +301,7 @@ curl -X DELETE https://ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz \\
               {snippet1}
             </pre>
             <p className="text-[11px] text-zinc-500">
-              Response: <code>{`{"domains": ["oneclash.xyz", "ocmail.me"]}`}</code>
+              Response: <code>{`{"domains": ["oneclash.biz.id", "oneclash.my.id"]}`}</code>
             </p>
           </div>
 

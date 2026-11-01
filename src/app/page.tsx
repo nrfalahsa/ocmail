@@ -45,8 +45,8 @@ interface SavedInbox {
 
 export default function HomePage() {
   const { data: session } = useSession();
-  const [domains, setDomains] = useState<string[]>(["ocmail.me", "oneclash.xyz"]);
-  const [selectedDomain, setSelectedDomain] = useState<string>("ocmail.me");
+  const [domains, setDomains] = useState<string[]>(["oneclash.biz.id", "oneclash.my.id"]);
+  const [selectedDomain, setSelectedDomain] = useState<string>("oneclash.biz.id");
   const [customPrefix, setCustomPrefix] = useState<string>("");
   const [isCustomMode, setIsCustomMode] = useState<boolean>(false);
   const [activeAddress, setActiveAddress] = useState<string>("");
@@ -367,18 +367,16 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setIsCustomMode(false)}
-                  className={`px-2.5 py-1 rounded transition text-xs ${
-                    !isCustomMode ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:text-white"
-                  }`}
+                  className={`px-2.5 py-1 rounded transition text-xs ${!isCustomMode ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:text-white"
+                    }`}
                 >
                   Random
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsCustomMode(true)}
-                  className={`px-2.5 py-1 rounded transition text-xs ${
-                    isCustomMode ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:text-white"
-                  }`}
+                  className={`px-2.5 py-1 rounded transition text-xs ${isCustomMode ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:text-white"
+                    }`}
                 >
                   Custom
                 </button>
@@ -422,11 +420,10 @@ export default function HomePage() {
                           setSelectedDomain(dom);
                           setDomainDropdownOpen(false);
                         }}
-                        className={`w-full px-3 py-1.5 text-left flex items-center justify-between transition ${
-                          selectedDomain === dom
-                            ? "bg-blue-600/10 text-blue-400 font-semibold"
-                            : "text-zinc-300 hover:bg-zinc-800/60"
-                        }`}
+                        className={`w-full px-3 py-1.5 text-left flex items-center justify-between transition ${selectedDomain === dom
+                          ? "bg-blue-600/10 text-blue-400 font-semibold"
+                          : "text-zinc-300 hover:bg-zinc-800/60"
+                          }`}
                       >
                         <span>@{dom}</span>
                         {selectedDomain === dom && <Check className="h-3 w-3 text-blue-400" />}
@@ -485,11 +482,10 @@ export default function HomePage() {
                   <div
                     key={msg.id}
                     onClick={() => setSelectedMessage(msg)}
-                    className={`p-3.5 cursor-pointer transition flex flex-col gap-1 ${
-                      isSelected
-                        ? "bg-zinc-800/80 border-l-2 border-zinc-200"
-                        : "hover:bg-zinc-800/30"
-                    }`}
+                    className={`p-3.5 cursor-pointer transition flex flex-col gap-1 ${isSelected
+                      ? "bg-zinc-800/80 border-l-2 border-zinc-200"
+                      : "hover:bg-zinc-800/30"
+                      }`}
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-medium text-zinc-200 truncate">
@@ -589,22 +585,20 @@ export default function HomePage() {
                 <div className="flex items-center gap-1 pt-1 border-t border-zinc-800/80">
                   <button
                     onClick={() => setViewTab("preview")}
-                    className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition ${
-                      viewTab === "preview"
-                        ? "bg-zinc-800 text-white"
-                        : "text-zinc-400 hover:text-white"
-                    }`}
+                    className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition ${viewTab === "preview"
+                      ? "bg-zinc-800 text-white"
+                      : "text-zinc-400 hover:text-white"
+                      }`}
                   >
                     <Eye className="h-3.5 w-3.5" />
                     Preview
                   </button>
                   <button
                     onClick={() => setViewTab("raw")}
-                    className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition ${
-                      viewTab === "raw"
-                        ? "bg-zinc-800 text-white"
-                        : "text-zinc-400 hover:text-white"
-                    }`}
+                    className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition ${viewTab === "raw"
+                      ? "bg-zinc-800 text-white"
+                      : "text-zinc-400 hover:text-white"
+                      }`}
                   >
                     <FileText className="h-3.5 w-3.5" />
                     Source (Raw)
@@ -679,11 +673,10 @@ export default function HomePage() {
                     <div
                       key={item.id}
                       onClick={() => handleSelectSavedInbox(item)}
-                      className={`group p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-3 ${
-                        isCurrent
-                          ? "bg-blue-950/20 border-blue-500/40 text-blue-300"
-                          : "bg-zinc-950/60 border-zinc-800/80 hover:bg-zinc-800/40 hover:border-zinc-700 text-zinc-200"
-                      }`}
+                      className={`group p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-3 ${isCurrent
+                        ? "bg-blue-950/20 border-blue-500/40 text-blue-300"
+                        : "bg-zinc-950/60 border-zinc-800/80 hover:bg-zinc-800/40 hover:border-zinc-700 text-zinc-200"
+                        }`}
                     >
                       <div className="space-y-0.5 min-w-0">
                         <div className="flex items-center gap-2">

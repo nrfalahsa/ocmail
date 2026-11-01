@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const { prefix, domain } = body;
 
-  const allowedDomains = (process.env.ALLOWED_DOMAINS || "ocmail.me,oneclash.xyz")
+  const allowedDomains = (process.env.ALLOWED_DOMAINS || "oneclash.biz.id,oneclash.my.id")
     .split(",")
     .map((d) => d.trim().toLowerCase());
 

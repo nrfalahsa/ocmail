@@ -20,7 +20,7 @@ const localMockStorage = new Map<string, MailMessage[]>();
 
 export async function createWorkerInbox(prefix?: string, domain?: string): Promise<{ address: string; prefix: string; domain: string }> {
   const workerUrl = process.env.CF_WORKER_URL?.replace(/\/$/, "");
-  const defaultDomain = (process.env.ALLOWED_DOMAINS || "ocmail.me,oneclash.xyz").split(",")[0].trim();
+  const defaultDomain = (process.env.ALLOWED_DOMAINS || "oneclash.biz.id,oneclash.my.id").split(",")[0].trim();
   const targetDomain = domain || defaultDomain;
 
   if (workerUrl) {
