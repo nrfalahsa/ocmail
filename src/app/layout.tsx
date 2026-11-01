@@ -35,7 +35,7 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="border-t border-zinc-900 py-6 text-center text-xs text-zinc-500">
-            <p>ocmail &copy; {new Date().getFullYear()} — High performance disposable email platform</p>
+            <p>ocmail &copy; {new Date().getFullYear()}</p>
           </footer>
         </Providers>
       </body>

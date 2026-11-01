@@ -15,16 +15,11 @@ export function Navbar() {
     <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur sticky top-0 z-50">
       <div className="max-w-[1500px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <NextLink href="/" className="flex items-center gap-2.5 font-bold text-lg tracking-tight text-white hover:opacity-90 transition">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
-              <Mail className="h-5 w-5" />
+          <NextLink href="/" className="flex items-center gap-2 font-semibold text-sm tracking-tight text-zinc-100 hover:text-white transition">
+            <div className="h-6 w-6 rounded-md bg-zinc-800 border border-zinc-700/80 flex items-center justify-center text-zinc-300">
+              <Mail className="h-3.5 w-3.5" />
             </div>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-zinc-200 to-zinc-400">
-              ocmail
-            </span>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60">
-              v1.0
-            </span>
+            <span>ocmail</span>
           </NextLink>
 
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium">

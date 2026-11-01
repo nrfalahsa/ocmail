@@ -21,6 +21,21 @@ export default function ApiKeysPage() {
   const [newKeyName, setNewKeyName] = useState("");
   const [generatedRawKey, setGeneratedRawKey] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState(false);
+  const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
+
+  function copySnippet(id: string, text: string) {
+    navigator.clipboard.writeText(text);
+    setCopiedSnippet(id);
+    setTimeout(() => setCopiedSnippet(null), 2000);
+  }
+
+  const snippet1 = `curl -X POST https://your-ocmail.vercel.app/api/v1/inboxes \\
+  -H "Authorization: Bearer ocm_YOUR_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"prefix": "mybot", "domain": "oneclash.xyz"}'`;
+
+  const snippet2 = `curl https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz/messages \\
+  -H "Authorization: Bearer ocm_YOUR_KEY"`;
 
   useEffect(() => {
     if (session?.user) {
@@ -245,20 +260,36 @@ export default function ApiKeysPage() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <span className="text-xs text-zinc-400 font-mono">1. Buat Custom atau Random Inbox</span>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-zinc-400 font-mono">1. Buat Custom atau Random Inbox</span>
+              <button
+                type="button"
+                onClick={() => copySnippet("snip1", snippet1)}
+                className="text-xs flex items-center gap-1 text-zinc-400 hover:text-white transition"
+              >
+                {copiedSnippet === "snip1" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedSnippet === "snip1" ? "Disalin" : "Salin"}</span>
+              </button>
+            </div>
             <pre className="p-3 rounded-xl bg-black/80 border border-zinc-800 text-xs font-mono text-zinc-300 overflow-x-auto">
-{`curl -X POST https://your-ocmail.vercel.app/api/v1/inboxes \\
-  -H "Authorization: Bearer ocm_YOUR_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"prefix": "mybot", "domain": "oneclash.xyz"}'`}
+{snippet1}
             </pre>
           </div>
 
           <div className="space-y-2">
-            <span className="text-xs text-zinc-400 font-mono">2. Ambil Pesan & Auto-OTP</span>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-zinc-400 font-mono">2. Ambil Pesan & Auto-OTP</span>
+              <button
+                type="button"
+                onClick={() => copySnippet("snip2", snippet2)}
+                className="text-xs flex items-center gap-1 text-zinc-400 hover:text-white transition"
+              >
+                {copiedSnippet === "snip2" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedSnippet === "snip2" ? "Disalin" : "Salin"}</span>
+              </button>
+            </div>
             <pre className="p-3 rounded-xl bg-black/80 border border-zinc-800 text-xs font-mono text-zinc-300 overflow-x-auto">
-{`curl https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz/messages \\
-  -H "Authorization: Bearer ocm_YOUR_KEY"`}
+{snippet2}
             </pre>
           </div>
         </div>

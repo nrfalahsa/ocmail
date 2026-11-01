@@ -178,54 +178,52 @@ export default function HomePage() {
   return (
     <div className="space-y-6">
       {/* Top Banner / Generator Card */}
-      <div className="rounded-3xl bg-gradient-to-b from-zinc-900 to-zinc-950 p-6 sm:p-8 border border-zinc-800/80 shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
-
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+      <div className="rounded-xl bg-zinc-900/50 p-5 sm:p-6 border border-zinc-800">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div className="space-y-2 flex-1">
             <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
-                Live Inbox Active
+              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                Active
               </span>
-              <span className="text-xs text-zinc-400">
-                Auto-refresh: 3s
+              <span className="text-[11px] text-zinc-500 font-mono">
+                auto-refresh 3s
               </span>
             </div>
 
             {/* Monospace Address Display */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2">
               <div
                 onClick={copyAddress}
-                className="cursor-pointer group flex items-center gap-3 px-4 py-3 rounded-2xl bg-zinc-950/80 border border-zinc-700 hover:border-cyan-500/60 transition shadow-inner"
+                className="cursor-pointer group flex items-center gap-2.5 px-3.5 py-2 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition"
               >
-                <Mail className="h-5 w-5 text-cyan-400 group-hover:scale-110 transition" />
-                <span className="font-mono text-lg sm:text-xl font-bold tracking-tight text-white select-all">
+                <Mail className="h-4 w-4 text-zinc-400 group-hover:text-zinc-200 transition" />
+                <span className="font-mono text-base font-semibold text-zinc-100 select-all">
                   {activeAddress || "Membuat inbox..."}
                 </span>
                 <button
                   type="button"
-                  className="p-1.5 rounded-lg bg-zinc-800 text-zinc-300 group-hover:bg-cyan-500 group-hover:text-black transition"
+                  className="p-1 rounded text-zinc-400 hover:text-white transition"
                   title="Salin email"
                 >
-                  {copiedAddr ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  {copiedAddr ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                 </button>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => fetchMessages(activeAddress)}
                   disabled={loadingMessages}
-                  className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-800 transition"
-                  title="Refresh inbox sekarang"
+                  className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200 transition"
+                  title="Refresh inbox"
                 >
-                  <RefreshCw className={`h-4 w-4 ${loadingMessages ? "animate-spin text-cyan-400" : ""}`} />
+                  <RefreshCw className={`h-4 w-4 ${loadingMessages ? "animate-spin text-zinc-200" : ""}`} />
                 </button>
 
                 <button
                   onClick={handleDeleteCurrentInbox}
-                  className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-red-400 hover:bg-zinc-800 transition"
-                  title="Hapus inbox ini"
+                  className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-red-400 transition"
+                  title="Hapus inbox"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -234,34 +232,34 @@ export default function HomePage() {
           </div>
 
           {/* Generator Controls */}
-          <div className="bg-zinc-950/90 p-4 sm:p-5 rounded-2xl border border-zinc-800/90 lg:w-[440px] space-y-4">
+          <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800/80 lg:w-[420px] space-y-3">
             <div className="flex items-center justify-between text-xs font-medium text-zinc-400">
-              <span>Metode Pembuatan:</span>
-              <div className="flex rounded-lg bg-zinc-900 p-0.5 border border-zinc-800">
+              <span className="text-zinc-400 text-[11px]">Mode Alamat:</span>
+              <div className="flex rounded-md bg-zinc-900 p-0.5 border border-zinc-800 text-xs">
                 <button
                   type="button"
                   onClick={() => setIsCustomMode(false)}
-                  className={`px-3 py-1 rounded-md text-xs transition ${
-                    !isCustomMode ? "bg-cyan-600 text-white font-medium" : "text-zinc-400 hover:text-white"
+                  className={`px-2.5 py-1 rounded transition text-xs ${
+                    !isCustomMode ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:text-white"
                   }`}
                 >
-                  Acak (Random)
+                  Random
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsCustomMode(true)}
-                  className={`px-3 py-1 rounded-md text-xs transition ${
-                    isCustomMode ? "bg-cyan-600 text-white font-medium" : "text-zinc-400 hover:text-white"
+                  className={`px-2.5 py-1 rounded transition text-xs ${
+                    isCustomMode ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:text-white"
                   }`}
                 >
-                  Kustom (Prefix)
+                  Custom
                 </button>
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2">
               {isCustomMode ? (
-                <div className="flex-1 flex items-center rounded-xl bg-zinc-900 border border-zinc-700/80 px-3 py-2 text-sm">
+                <div className="flex-1 flex items-center rounded-lg bg-zinc-900 border border-zinc-800 px-2.5 py-1.5 text-xs">
                   <input
                     type="text"
                     placeholder="nama-kamu"
@@ -269,14 +267,14 @@ export default function HomePage() {
                     onChange={(e) => setCustomPrefix(e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g, ""))}
                     className="w-full bg-transparent text-white font-mono placeholder-zinc-500 focus:outline-none"
                   />
-                  <span className="text-zinc-500 text-xs font-mono">@</span>
+                  <span className="text-zinc-500 font-mono">@</span>
                 </div>
               ) : null}
 
               <select
                 value={selectedDomain}
                 onChange={(e) => setSelectedDomain(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-700/80 text-white text-xs font-mono focus:outline-none focus:border-cyan-500"
+                className="px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200 text-xs font-mono focus:outline-none focus:border-zinc-700"
               >
                 {domains.map((dom) => (
                   <option key={dom} value={dom}>
@@ -289,10 +287,10 @@ export default function HomePage() {
                 type="button"
                 onClick={() => handleCreateInbox(isCustomMode)}
                 disabled={generating || (isCustomMode && !customPrefix.trim())}
-                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-lg shadow-cyan-600/20 disabled:opacity-50"
+                className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-medium flex items-center justify-center gap-1.5 transition disabled:opacity-50"
               >
                 <Sparkles className="h-3.5 w-3.5" />
-                {generating ? "Proses..." : isCustomMode ? "Buat Kustom" : "Acak Baru"}
+                {generating ? "..." : isCustomMode ? "Buat" : "Baru"}
               </button>
             </div>
           </div>
@@ -300,31 +298,31 @@ export default function HomePage() {
       </div>
 
       {/* Main Mailbox Workspace: Master-Detail Widescreen Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[580px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 min-h-[560px]">
         {/* Left Column: Inbox Message List (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col rounded-3xl bg-zinc-900/40 border border-zinc-800/80 overflow-hidden">
-          <div className="p-4 border-b border-zinc-800/80 flex items-center justify-between bg-zinc-950/40">
+        <div className="lg:col-span-5 flex flex-col rounded-xl bg-zinc-900/30 border border-zinc-800 overflow-hidden">
+          <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/60">
             <div className="flex items-center gap-2">
-              <InboxIcon className="h-4 w-4 text-cyan-400" />
-              <h2 className="text-sm font-semibold text-white">Kotak Masuk</h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 font-mono">
+              <InboxIcon className="h-4 w-4 text-zinc-400" />
+              <h2 className="text-xs font-semibold text-zinc-200 uppercase tracking-wider">Kotak Masuk</h2>
+              <span className="text-[11px] px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300 font-mono">
                 {messages.length}
               </span>
             </div>
-            <span className="text-[11px] text-zinc-500">
+            <span className="text-[11px] text-zinc-500 font-mono">
               {mounted && lastChecked ? `Cek: ${lastChecked}` : ""}
             </span>
           </div>
 
           <div className="flex-1 overflow-y-auto divide-y divide-zinc-800/60 max-h-[620px]">
             {messages.length === 0 ? (
-              <div className="p-12 text-center flex flex-col items-center justify-center h-full text-zinc-500 space-y-3">
-                <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-800/60 text-zinc-600 animate-pulse">
-                  <Mail className="h-8 w-8" />
+              <div className="p-12 text-center flex flex-col items-center justify-center h-full text-zinc-500 space-y-2.5">
+                <div className="p-3 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-500">
+                  <Mail className="h-5 w-5" />
                 </div>
-                <div className="font-medium text-zinc-300 text-sm">Menunggu email masuk...</div>
-                <p className="text-xs text-zinc-500 max-w-xs leading-relaxed">
-                  Kirim email ke alamat di atas atau gunakan untuk registrasi (misal: xAI/Grok, GitHub, dll). Email akan otomatis muncul dalam 3 detik.
+                <div className="font-medium text-zinc-300 text-xs">Menunggu email masuk...</div>
+                <p className="text-[11px] text-zinc-500 max-w-xs leading-relaxed">
+                  Email yang dikirim ke alamat aktif akan langsung muncul di sini.
                 </p>
               </div>
             ) : (
@@ -334,29 +332,29 @@ export default function HomePage() {
                   <div
                     key={msg.id}
                     onClick={() => setSelectedMessage(msg)}
-                    className={`p-4 cursor-pointer transition flex flex-col gap-1.5 ${
+                    className={`p-3.5 cursor-pointer transition flex flex-col gap-1 ${
                       isSelected
-                        ? "bg-zinc-800/70 border-l-4 border-cyan-400"
+                        ? "bg-zinc-800/80 border-l-2 border-zinc-200"
                         : "hover:bg-zinc-800/30"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-semibold text-zinc-200 truncate">
+                      <span className="text-xs font-medium text-zinc-200 truncate">
                         {msg.from}
                       </span>
-                      <span className="text-[11px] text-zinc-500 whitespace-nowrap">
+                      <span className="text-[10px] text-zinc-500 font-mono whitespace-nowrap">
                         {mounted ? new Date(msg.received_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
                       </span>
                     </div>
 
-                    <div className="text-sm font-medium text-white truncate">
+                    <div className="text-xs font-semibold text-zinc-100 truncate">
                       {msg.subject || "(Tanpa Subjek)"}
                     </div>
 
                     {/* Quick OTP badge on card if detected */}
                     {msg.otp && (
                       <div className="mt-1 flex items-center justify-between">
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           <CheckCircle className="h-3 w-3" />
                           OTP: {msg.otp}
                         </span>
@@ -365,7 +363,7 @@ export default function HomePage() {
                             e.stopPropagation();
                             copyOtp(msg.otp!);
                           }}
-                          className="text-[11px] text-cyan-400 hover:text-cyan-300 underline"
+                          className="text-[11px] text-zinc-400 hover:text-white transition"
                         >
                           Salin
                         </button>
@@ -379,18 +377,18 @@ export default function HomePage() {
         </div>
 
         {/* Right Column: Message Inspector (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col rounded-3xl bg-zinc-900/40 border border-zinc-800/80 overflow-hidden">
+        <div className="lg:col-span-7 flex flex-col rounded-xl bg-zinc-900/30 border border-zinc-800 overflow-hidden">
           {selectedMessage ? (
             <div className="flex flex-col h-full">
               {/* Message Header Bar */}
-              <div className="p-6 border-b border-zinc-800/80 bg-zinc-950/40 space-y-4">
+              <div className="p-4 sm:p-5 border-b border-zinc-800 bg-zinc-950/60 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-bold text-white tracking-tight">
+                  <div className="space-y-0.5">
+                    <h3 className="text-base font-semibold text-zinc-100 tracking-tight">
                       {selectedMessage.subject || "(Tanpa Subjek)"}
                     </h3>
                     <div className="text-xs text-zinc-400">
-                      Dari: <span className="text-zinc-200 font-medium">{selectedMessage.from}</span>
+                      Dari: <span className="text-zinc-200">{selectedMessage.from}</span>
                     </div>
                     <div className="text-xs text-zinc-400">
                       Ke: <span className="text-zinc-300 font-mono">{selectedMessage.to}</span>
@@ -400,25 +398,25 @@ export default function HomePage() {
                   <a
                     href={`/api/v1/inboxes/${encodeURIComponent(selectedMessage.to)}/messages/${selectedMessage.id}/raw`}
                     download={`${selectedMessage.id}.eml`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition border border-zinc-700/60"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-300 transition border border-zinc-700/80"
                   >
                     <Download className="h-3.5 w-3.5" />
-                    Unduh .EML
+                    Unduh .eml
                   </a>
                 </div>
 
                 {/* Big Prominent OTP Card Banner */}
                 {selectedMessage.otp && (
-                  <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/80 to-zinc-900 border border-emerald-500/50 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg shadow-emerald-950/30">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
-                        <CheckCircle className="h-6 w-6" />
+                  <div className="p-3 rounded-lg bg-zinc-900 border border-emerald-500/30 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-8 w-8 rounded-md bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+                        <CheckCircle className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-xs uppercase font-bold tracking-wider text-emerald-400">
-                          Kode OTP Terdeteksi
+                        <div className="text-[10px] uppercase font-mono font-medium text-emerald-400">
+                          Kode Verifikasi
                         </div>
-                        <div className="text-2xl font-mono font-black text-white tracking-widest select-all">
+                        <div className="text-xl font-mono font-semibold text-white tracking-wider select-all">
                           {selectedMessage.otp}
                         </div>
                       </div>
@@ -426,19 +424,19 @@ export default function HomePage() {
 
                     <button
                       onClick={() => copyOtp(selectedMessage.otp!)}
-                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs flex items-center justify-center gap-2 transition shadow-md shadow-emerald-500/20"
+                      className="px-3.5 py-1.5 rounded-md bg-zinc-100 hover:bg-white text-zinc-900 font-medium text-xs flex items-center gap-1.5 transition"
                     >
-                      {copiedOtp ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                      {copiedOtp ? "OTP Disalin!" : "Salin Kode OTP"}
+                      {copiedOtp ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                      {copiedOtp ? "Disalin" : "Salin Kode"}
                     </button>
                   </div>
                 )}
 
                 {/* View Tabs */}
-                <div className="flex items-center gap-2 pt-2 border-t border-zinc-800/60">
+                <div className="flex items-center gap-1 pt-1 border-t border-zinc-800/80">
                   <button
                     onClick={() => setViewTab("preview")}
-                    className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition ${
+                    className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition ${
                       viewTab === "preview"
                         ? "bg-zinc-800 text-white"
                         : "text-zinc-400 hover:text-white"
@@ -449,7 +447,7 @@ export default function HomePage() {
                   </button>
                   <button
                     onClick={() => setViewTab("raw")}
-                    className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5 transition ${
+                    className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition ${
                       viewTab === "raw"
                         ? "bg-zinc-800 text-white"
                         : "text-zinc-400 hover:text-white"
@@ -462,10 +460,10 @@ export default function HomePage() {
               </div>
 
               {/* Message Body Content */}
-              <div className="flex-1 p-6 overflow-y-auto max-h-[500px]">
+              <div className="flex-1 p-5 overflow-y-auto max-h-[500px]">
                 {viewTab === "preview" ? (
                   selectedMessage.html ? (
-                    <div className="rounded-xl overflow-hidden bg-white border border-zinc-800">
+                    <div className="rounded-lg overflow-hidden bg-white border border-zinc-800">
                       <iframe
                         srcDoc={selectedMessage.html}
                         title="Email Preview"
@@ -474,12 +472,12 @@ export default function HomePage() {
                       />
                     </div>
                   ) : (
-                    <div className="prose prose-invert max-w-none text-zinc-300 text-sm whitespace-pre-wrap leading-relaxed font-sans">
+                    <div className="text-zinc-300 text-xs whitespace-pre-wrap leading-relaxed font-sans">
                       {selectedMessage.text || selectedMessage.body}
                     </div>
                   )
                 ) : (
-                  <pre className="p-4 rounded-xl bg-black/80 border border-zinc-800 text-xs font-mono text-zinc-400 overflow-x-auto whitespace-pre-wrap">
+                  <pre className="p-3.5 rounded-lg bg-zinc-950 border border-zinc-800/80 text-xs font-mono text-zinc-400 overflow-x-auto whitespace-pre-wrap">
                     {selectedMessage.body}
                   </pre>
                 )}
@@ -487,11 +485,8 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="p-12 text-center flex flex-col items-center justify-center h-full text-zinc-500 space-y-2">
-              <Mail className="h-10 w-10 text-zinc-700" />
-              <div className="text-sm font-medium text-zinc-400">Pilih email untuk membaca</div>
-              <p className="text-xs text-zinc-600">
-                Pilih salah satu pesan di sebelah kiri untuk melihat isi dan kode verifikasi.
-              </p>
+              <Mail className="h-8 w-8 text-zinc-700" />
+              <div className="text-xs font-medium text-zinc-400">Pilih pesan di samping untuk membaca</div>
             </div>
           )}
         </div>
