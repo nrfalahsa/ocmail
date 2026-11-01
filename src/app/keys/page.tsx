@@ -123,8 +123,8 @@ export default function ApiKeysPage() {
           Anda perlu login untuk membuat dan mengelola API Key untuk integrasi otomatisasi (Python, Node.js, CLI).
         </p>
         <button
-          onClick={() => signIn()}
-          className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2.5 rounded-xl font-medium text-sm transition"
+          onClick={() => signIn(undefined, { callbackUrl: "/" })}
+          className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg font-medium text-xs transition"
         >
           Masuk Sekarang
         </button>
@@ -138,7 +138,7 @@ export default function ApiKeysPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/80 pb-6">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-            <Key className="h-6 w-6 text-cyan-400" />
+            <Key className="h-6 w-6 text-blue-400" />
             API Keys & Automation
           </h1>
           <p className="text-sm text-zinc-400 mt-1">
@@ -149,21 +149,21 @@ export default function ApiKeysPage() {
 
       {/* Generated Token Alert */}
       {generatedRawKey && (
-        <div className="p-5 rounded-2xl bg-cyan-950/40 border border-cyan-500/40 space-y-3 animate-in fade-in">
-          <div className="flex items-center gap-2 text-cyan-300 font-semibold text-sm">
-            <ShieldAlert className="h-5 w-5 text-cyan-400" />
-            API Key Baru Berhasil Dibuat!
+        <div className="p-4 rounded-xl bg-blue-950/30 border border-blue-500/30 space-y-2.5 animate-in fade-in">
+          <div className="flex items-center gap-2 text-blue-300 font-semibold text-xs">
+            <ShieldAlert className="h-4 w-4 text-blue-400" />
+            API Key Baru Berhasil Dibuat
           </div>
-          <p className="text-xs text-cyan-200/80">
+          <p className="text-[11px] text-blue-200/80">
             Salin sekarang. Demi keamanan, token ini <strong>tidak akan pernah ditampilkan lagi</strong>.
           </p>
-          <div className="flex items-center gap-2 bg-black/60 p-3 rounded-xl border border-cyan-500/30">
-            <code className="text-sm font-mono text-cyan-300 break-all flex-1 select-all">
+          <div className="flex items-center gap-2 bg-black/60 p-2.5 rounded-lg border border-blue-500/20">
+            <code className="text-xs font-mono text-blue-300 break-all flex-1 select-all">
               {generatedRawKey}
             </code>
             <button
               onClick={() => copyToClipboard(generatedRawKey)}
-              className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium flex items-center gap-1.5 transition"
+              className="px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium flex items-center gap-1.5 transition"
             >
               {copiedKey ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copiedKey ? "Disalin!" : "Salin"}
@@ -187,7 +187,7 @@ export default function ApiKeysPage() {
           <button
             type="submit"
             disabled={creating}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-sm font-medium flex items-center justify-center gap-2 transition disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium flex items-center justify-center gap-1.5 transition disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             {creating ? "Membuat..." : "Buat Key"}
@@ -226,7 +226,7 @@ export default function ApiKeysPage() {
                         {k.keyPrefix}
                       </code>
                     </td>
-                    <td className="py-3.5 px-4 text-center font-mono text-cyan-400">
+                    <td className="py-3.5 px-4 text-center font-mono text-blue-400">
                       {k.requestsCount.toLocaleString()}
                     </td>
                     <td className="py-3.5 px-4 text-xs text-zinc-400">
@@ -255,7 +255,7 @@ export default function ApiKeysPage() {
       {/* Code Snippets & Documentation */}
       <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800 space-y-4">
         <div className="flex items-center gap-2 text-white font-semibold text-base">
-          <Terminal className="h-5 w-5 text-cyan-400" />
+          <Terminal className="h-5 w-5 text-blue-400" />
           Contoh Penggunaan API (cURL & Python)
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

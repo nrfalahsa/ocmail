@@ -128,7 +128,7 @@ export default function AdminPage() {
   if (status === "loading" || loading) {
     return (
       <div className="py-20 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
       </div>
     );
   }
@@ -151,7 +151,7 @@ export default function AdminPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/80 pb-6">
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
-            <ShieldCheck className="h-6 w-6 text-cyan-400" />
+            <ShieldCheck className="h-6 w-6 text-blue-400" />
             Admin Dashboard
           </h1>
           <p className="text-sm text-zinc-400 mt-1">
@@ -165,7 +165,7 @@ export default function AdminPage() {
         <div className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
           <div className="flex items-center justify-between text-zinc-400 mb-2">
             <span className="text-xs uppercase font-medium">Total Users</span>
-            <Users className="h-4 w-4 text-cyan-400" />
+            <Users className="h-4 w-4 text-blue-400" />
           </div>
           <div className="text-2xl font-bold text-white font-mono">
             {stats?.totalUsers.toLocaleString() ?? 0}
@@ -209,7 +209,7 @@ export default function AdminPage() {
           onClick={() => setActiveTab("users")}
           className={`pb-3 px-4 text-sm font-medium border-b-2 transition ${
             activeTab === "users"
-              ? "border-cyan-500 text-white"
+              ? "border-blue-500 text-white"
               : "border-transparent text-zinc-400 hover:text-white"
           }`}
         >
@@ -219,7 +219,7 @@ export default function AdminPage() {
           onClick={() => setActiveTab("system")}
           className={`pb-3 px-4 text-sm font-medium border-b-2 transition ${
             activeTab === "system"
-              ? "border-cyan-500 text-white"
+              ? "border-blue-500 text-white"
               : "border-transparent text-zinc-400 hover:text-white"
           }`}
         >
@@ -265,7 +265,7 @@ export default function AdminPage() {
                         <span
                           className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${
                             u.role === "ADMIN"
-                              ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                              ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
                               : "bg-zinc-800 text-zinc-300"
                           }`}
                         >
@@ -285,7 +285,7 @@ export default function AdminPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => handleToggleRole(u.id, u.role)}
-                            className="p-1.5 rounded-lg text-zinc-400 hover:text-cyan-400 hover:bg-zinc-800 transition"
+                            className="p-1.5 rounded-lg text-zinc-400 hover:text-blue-400 hover:bg-zinc-800 transition"
                             title="Ganti Role (USER / ADMIN)"
                           >
                             <UserCog className="h-4 w-4" />

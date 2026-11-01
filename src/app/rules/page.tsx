@@ -1,7 +1,11 @@
+"use client";
+
+import { useSession } from "next-auth/react";
 import { Shield, ShieldAlert, Lock, Unlock, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function RulesPage() {
+  const { data: session } = useSession();
   return (
     <div className="max-w-4xl mx-auto py-6 space-y-10">
       {/* Title */}
@@ -113,20 +117,22 @@ export default function RulesPage() {
         </div>
       </div>
 
-      {/* CTA Box */}
-      <div className="p-5 rounded-xl bg-zinc-900 border border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <h3 className="text-sm font-semibold text-white">Mulai Lindungi Inbox Kustom Anda</h3>
-          <p className="text-xs text-zinc-400">Masuk dengan akun OAuth untuk mengklaim prefix kustom eksklusif.</p>
+      {/* CTA Box - Only visible when user is NOT logged in */}
+      {!session?.user && (
+        <div className="p-5 rounded-xl bg-zinc-900 border border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-semibold text-white">Mulai Lindungi Inbox Kustom Anda</h3>
+            <p className="text-xs text-zinc-400">Masuk dengan akun OAuth untuk mengklaim prefix kustom eksklusif.</p>
+          </div>
+          <Link
+            href="/auth/signin"
+            className="px-4 py-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-900 font-medium text-xs flex items-center gap-1.5 transition whitespace-nowrap"
+          >
+            Masuk Sekarang
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
-        <Link
-          href="/auth/signin"
-          className="px-4 py-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-900 font-medium text-xs flex items-center gap-1.5 transition whitespace-nowrap"
-        >
-          Masuk Sekarang
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
+      )}
     </div>
   );
 }
