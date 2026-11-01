@@ -30,6 +30,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<"users" | "system">("users");
+  const [blockedWordsInput, setBlockedWordsInput] = useState("");
+  const [savingKeywords, setSavingKeywords] = useState(false);
+  const [keywordStatus, setKeywordStatus] = useState<string | null>(null);
 
   const isAdmin = session?.user?.role === "ADMIN";
 
@@ -44,9 +47,10 @@ export default function AdminPage() {
   async function loadData() {
     setLoading(true);
     try {
-      const [resStats, resUsers] = await Promise.all([
+      const [resStats, resUsers, resKeywords] = await Promise.all([
         fetch("/api/admin/stats"),
         fetch(`/api/admin/users?q=${encodeURIComponent(search)}`),
+        fetch("/api/admin/blocked-keywords"),
       ]);
 
       if (resStats.ok) {
@@ -57,10 +61,37 @@ export default function AdminPage() {
         const d = await resUsers.json();
         setUsers(d.users || []);
       }
+      if (resKeywords.ok) {
+        const d = await resKeywords.json();
+        setBlockedWordsInput(d.raw || "");
+      }
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleSaveKeywords(e: React.FormEvent) {
+    e.preventDefault();
+    setSavingKeywords(true);
+    setKeywordStatus(null);
+    try {
+      const res = await fetch("/api/admin/blocked-keywords", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keywords: blockedWordsInput }),
+      });
+      if (res.ok) {
+        const d = await res.json();
+        setBlockedWordsInput(d.raw || "");
+        setKeywordStatus("Daftar kata terlarang berhasil disimpan.");
+        setTimeout(() => setKeywordStatus(null), 3000);
+      }
+    } catch {
+      setKeywordStatus("Gagal menyimpan perubahan.");
+    } finally {
+      setSavingKeywords(false);
     }
   }
 
@@ -278,18 +309,54 @@ export default function AdminPage() {
           </div>
         </div>
       ) : (
-        <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800 space-y-4">
-          <h3 className="text-base font-semibold text-white">Status Bridge Cloudflare Worker</h3>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-950 border border-zinc-800">
-              <span className="text-zinc-400">Cloudflare Worker Script</span>
-              <span className="font-mono text-xs text-cyan-400">cloudflare/worker.js</span>
+        <div className="space-y-6">
+          {/* Blocked Keywords Config Card */}
+          <div className="p-6 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-4">
+            <div>
+              <h3 className="text-sm font-semibold text-white">Filter Prefix Kustom Terlarang (Reserved Words)</h3>
+              <p className="text-xs text-zinc-400 mt-1">
+                Kata-kata di bawah ini tidak dapat digunakan sebagai prefix email kustom oleh pengguna umum (misal: <code>admin@...</code>, <code>support@...</code>). Pisahkan kata dengan tanda koma atau baris baru.
+              </p>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-950 border border-zinc-800">
-              <span className="text-zinc-400">Mode Bridge</span>
-              <span className="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                Cloudflare Email Routing + KV Store
-              </span>
+
+            <form onSubmit={handleSaveKeywords} className="space-y-3">
+              <textarea
+                rows={4}
+                value={blockedWordsInput}
+                onChange={(e) => setBlockedWordsInput(e.target.value)}
+                placeholder="admin, support, billing, root, abuse..."
+                className="w-full p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-mono text-zinc-200 focus:outline-none focus:border-zinc-700"
+              />
+
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-emerald-400 font-medium">
+                  {keywordStatus || ""}
+                </span>
+                <button
+                  type="submit"
+                  disabled={savingKeywords}
+                  className="px-4 py-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-medium transition disabled:opacity-50"
+                >
+                  {savingKeywords ? "Menyimpan..." : "Simpan Perubahan"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Cloudflare Worker Status */}
+          <div className="p-6 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-4">
+            <h3 className="text-sm font-semibold text-white">Status Bridge Cloudflare Worker</h3>
+            <div className="space-y-3 text-xs">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-950 border border-zinc-800">
+                <span className="text-zinc-400">Cloudflare Worker Script</span>
+                <span className="font-mono text-zinc-300">cloudflare/worker.js</span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-950 border border-zinc-800">
+                <span className="text-zinc-400">Mode Bridge</span>
+                <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                  Cloudflare Email Routing + KV Store
+                </span>
+              </div>
             </div>
           </div>
         </div>

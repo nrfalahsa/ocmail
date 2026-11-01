@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/api-guard";
 import { createWorkerInbox } from "@/lib/cf-client";
 import { prisma } from "@/lib/prisma";
+import { getBlockedKeywords } from "@/app/api/admin/blocked-keywords/route";
 
 export async function GET(req: NextRequest) {
   const authCtx = await authenticateRequest(req);
@@ -41,6 +42,16 @@ export async function POST(req: NextRequest) {
     if (sanitized.length < 2 || sanitized.length > 32) {
       return NextResponse.json({ error: "Prefix must be 2-32 alphanumeric characters" }, { status: 400 });
     }
+
+    // Check reserved / blocked words from admin setting
+    const blocked = await getBlockedKeywords();
+    if (blocked.includes(sanitized) && authCtx.role !== "ADMIN") {
+      return NextResponse.json(
+        { error: `Prefix '${sanitized}' dilindungi oleh sistem. Silakan gunakan nama lain.` },
+        { status: 400 }
+      );
+    }
+
     cleanPrefix = sanitized;
     isCustom = true;
   }
