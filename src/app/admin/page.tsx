@@ -33,6 +33,8 @@ export default function AdminPage() {
   const [blockedWordsInput, setBlockedWordsInput] = useState("");
   const [savingKeywords, setSavingKeywords] = useState(false);
   const [keywordStatus, setKeywordStatus] = useState<string | null>(null);
+  const [deleteTargetUser, setDeleteTargetUser] = useState<UserItem | null>(null);
+  const [deletingUser, setDeletingUser] = useState(false);
 
   const isAdmin = session?.user?.role === "ADMIN";
 
@@ -113,8 +115,10 @@ export default function AdminPage() {
     }
   }
 
-  async function handleDeleteUser(userId: string) {
-    if (!confirm("Hapus user ini beserta seluruh inbox dan key mereka?")) return;
+  async function confirmDeleteUser() {
+    if (!deleteTargetUser) return;
+    setDeletingUser(true);
+    const userId = deleteTargetUser.id;
     try {
       const res = await fetch(`/api/admin/users?userId=${userId}`, { method: "DELETE" });
       if (res.ok) {
@@ -122,6 +126,9 @@ export default function AdminPage() {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setDeletingUser(false);
+      setDeleteTargetUser(null);
     }
   }
 
@@ -292,7 +299,7 @@ export default function AdminPage() {
                           </button>
                           {u.id !== session?.user?.id && (
                             <button
-                              onClick={() => handleDeleteUser(u.id)}
+                              onClick={() => setDeleteTargetUser(u)}
                               className="p-1.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-zinc-800 transition"
                               title="Hapus User"
                             >
@@ -357,6 +364,48 @@ export default function AdminPage() {
                   Cloudflare Email Routing + KV Store
                 </span>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Modal for Deleting User */}
+      {deleteTargetUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-sm rounded-2xl bg-zinc-900 border border-zinc-800 shadow-2xl p-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0">
+                <Trash2 className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">Hapus Akun Pengguna</h3>
+                <p className="text-[11px] text-zinc-400">Tindakan ini permanen.</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-zinc-300 leading-relaxed">
+              Apakah Anda yakin ingin menghapus akun{" "}
+              <strong className="text-white">{deleteTargetUser.email || deleteTargetUser.name}</strong>? Seluruh data
+              inbox yang diklaim dan API key milik user ini akan ikut dihapus.
+            </p>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setDeleteTargetUser(null)}
+                disabled={deletingUser}
+                className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium transition"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={confirmDeleteUser}
+                disabled={deletingUser}
+                className="px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-medium transition disabled:opacity-50"
+              >
+                {deletingUser ? "Menghapus..." : "Hapus Pengguna"}
+              </button>
             </div>
           </div>
         </div>

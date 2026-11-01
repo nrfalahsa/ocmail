@@ -29,12 +29,31 @@ export default function ApiKeysPage() {
     setTimeout(() => setCopiedSnippet(null), 2000);
   }
 
-  const snippet1 = `curl -X POST https://your-ocmail.vercel.app/api/v1/inboxes \\
+  const snippet1 = `# Ambil domain aktif yang tersedia
+curl https://your-ocmail.vercel.app/api/domains`;
+
+  const snippet2 = `# 1. Buat Alamat Random
+curl -X POST https://your-ocmail.vercel.app/api/v1/inboxes \\
+  -H "Authorization: Bearer ocm_YOUR_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"domain": "oneclash.xyz"}'
+
+# 2. Buat Alamat Kustom (Eksklusif terkunci ke akun Anda)
+curl -X POST https://your-ocmail.vercel.app/api/v1/inboxes \\
   -H "Authorization: Bearer ocm_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{"prefix": "mybot", "domain": "oneclash.xyz"}'`;
 
-  const snippet2 = `curl https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz/messages \\
+  const snippet3 = `# Ambil pesan & kode OTP otomatis
+curl https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz/messages \\
+  -H "Authorization: Bearer ocm_YOUR_KEY"`;
+
+  const snippet4 = `# 1. Lihat daftar email milik Anda (Reuse)
+curl https://your-ocmail.vercel.app/api/v1/inboxes \\
+  -H "Authorization: Bearer ocm_YOUR_KEY"
+
+# 2. Hapus email dari akun & server
+curl -X DELETE https://your-ocmail.vercel.app/api/v1/inboxes/mybot@oneclash.xyz \\
   -H "Authorization: Bearer ocm_YOUR_KEY"`;
 
   useEffect(() => {
@@ -142,7 +161,7 @@ export default function ApiKeysPage() {
             API Keys & Automation
           </h1>
           <p className="text-sm text-zinc-400 mt-1">
-            Gunakan API Key untuk mengintegrasikan script bot/farm (seperti grok.py atau tempik_client.py) langsung ke ocmail.
+            Gunakan API Key untuk mengintegrasikan script bot/farm ke ocmail.
           </p>
         </div>
       </div>
@@ -178,7 +197,7 @@ export default function ApiKeysPage() {
         <form onSubmit={handleCreateKey} className="flex flex-col sm:flex-row gap-3">
           <input
             type="text"
-            placeholder="Contoh: Grok Farm Script, Server Alpha"
+            placeholder="Contoh: Farm Script"
             value={newKeyName}
             onChange={(e) => setNewKeyName(e.target.value)}
             className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-cyan-500 transition"
@@ -253,15 +272,22 @@ export default function ApiKeysPage() {
       </div>
 
       {/* Code Snippets & Documentation */}
-      <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800 space-y-4">
-        <div className="flex items-center gap-2 text-white font-semibold text-base">
-          <Terminal className="h-5 w-5 text-blue-400" />
-          Contoh Penggunaan API (cURL & Python)
+      <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800 space-y-6">
+        <div>
+          <div className="flex items-center gap-2 text-white font-semibold text-base">
+            <Terminal className="h-5 w-5 text-blue-400" />
+            Dokumentasi & Referensi API Lengkap
+          </div>
+          <p className="text-xs text-zinc-400 mt-1">
+            Format autentikasi: sertakan header <code>Authorization: Bearer ocm_...</code> pada setiap request.
+          </p>
         </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="space-y-2">
+          {/* Card 1: Domains */}
+          <div className="space-y-2 p-4 rounded-xl bg-zinc-950/70 border border-zinc-800">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-zinc-400 font-mono">1. Buat Custom atau Random Inbox</span>
+              <span className="text-xs font-semibold text-zinc-200">1. Domain yang Tersedia</span>
               <button
                 type="button"
                 onClick={() => copySnippet("snip1", snippet1)}
@@ -271,14 +297,18 @@ export default function ApiKeysPage() {
                 <span>{copiedSnippet === "snip1" ? "Disalin" : "Salin"}</span>
               </button>
             </div>
-            <pre className="p-3 rounded-xl bg-black/80 border border-zinc-800 text-xs font-mono text-zinc-300 overflow-x-auto">
+            <pre className="p-3 rounded-lg bg-black/90 border border-zinc-800/80 text-xs font-mono text-zinc-300 overflow-x-auto">
 {snippet1}
             </pre>
+            <p className="text-[11px] text-zinc-500">
+              Response: <code>{`{"domains": ["oneclash.xyz", "ocmail.me"]}`}</code>
+            </p>
           </div>
 
-          <div className="space-y-2">
+          {/* Card 2: Create Random / Custom */}
+          <div className="space-y-2 p-4 rounded-xl bg-zinc-950/70 border border-zinc-800">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-zinc-400 font-mono">2. Ambil Pesan & Auto-OTP</span>
+              <span className="text-xs font-semibold text-zinc-200">2. Buat Email (Random & Kustom)</span>
               <button
                 type="button"
                 onClick={() => copySnippet("snip2", snippet2)}
@@ -288,9 +318,100 @@ export default function ApiKeysPage() {
                 <span>{copiedSnippet === "snip2" ? "Disalin" : "Salin"}</span>
               </button>
             </div>
-            <pre className="p-3 rounded-xl bg-black/80 border border-zinc-800 text-xs font-mono text-zinc-300 overflow-x-auto">
+            <pre className="p-3 rounded-lg bg-black/90 border border-zinc-800/80 text-xs font-mono text-zinc-300 overflow-x-auto">
 {snippet2}
             </pre>
+            <p className="text-[11px] text-zinc-500">
+              Status <code>201 Created</code>. Prefix yang dibuat otomatis terikat ke akun API Key Anda.
+            </p>
+          </div>
+
+          {/* Card 3: Poll Messages & OTP */}
+          <div className="space-y-2 p-4 rounded-xl bg-zinc-950/70 border border-zinc-800">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-200">3. Ambil Pesan & Auto OTP</span>
+              <button
+                type="button"
+                onClick={() => copySnippet("snip3", snippet3)}
+                className="text-xs flex items-center gap-1 text-zinc-400 hover:text-white transition"
+              >
+                {copiedSnippet === "snip3" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedSnippet === "snip3" ? "Disalin" : "Salin"}</span>
+              </button>
+            </div>
+            <pre className="p-3 rounded-lg bg-black/90 border border-zinc-800/80 text-xs font-mono text-zinc-300 overflow-x-auto">
+{snippet3}
+            </pre>
+            <p className="text-[11px] text-zinc-500">
+              Response berupa array pesan. Field <code>&quot;otp&quot;: &quot;123456&quot;</code> terisi otomatis jika ditemukan kode verifikasi.
+            </p>
+          </div>
+
+          {/* Card 4: Reuse & Delete */}
+          <div className="space-y-2 p-4 rounded-xl bg-zinc-950/70 border border-zinc-800">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-200">4. Reuse (Riwayat) & Hapus</span>
+              <button
+                type="button"
+                onClick={() => copySnippet("snip4", snippet4)}
+                className="text-xs flex items-center gap-1 text-zinc-400 hover:text-white transition"
+              >
+                {copiedSnippet === "snip4" ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copiedSnippet === "snip4" ? "Disalin" : "Salin"}</span>
+              </button>
+            </div>
+            <pre className="p-3 rounded-lg bg-black/90 border border-zinc-800/80 text-xs font-mono text-zinc-300 overflow-x-auto">
+{snippet4}
+            </pre>
+            <p className="text-[11px] text-zinc-500">
+              <code>GET /api/v1/inboxes</code> mengambil daftar email milik Anda untuk dipakai ulang.
+            </p>
+          </div>
+        </div>
+
+        {/* Error Codes Reference Table */}
+        <div className="space-y-3 pt-2">
+          <div className="text-xs font-semibold text-zinc-200">Daftar Kode Status & Pesan Error API</div>
+          <div className="rounded-xl border border-zinc-800 overflow-hidden bg-zinc-950">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-zinc-900/60 text-zinc-400 font-mono text-[11px] border-b border-zinc-800">
+                <tr>
+                  <th className="py-2.5 px-3 w-28">Status</th>
+                  <th className="py-2.5 px-3 w-40">Penyebab</th>
+                  <th className="py-2.5 px-3">Contoh Respons JSON</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-800/60 text-zinc-300">
+                <tr>
+                  <td className="py-2.5 px-3 font-mono text-amber-400 font-semibold">400 Bad Request</td>
+                  <td className="py-2.5 px-3 text-zinc-400">Prefix tidak valid / terlarang</td>
+                  <td className="py-2.5 px-3 font-mono text-[11px] text-zinc-400">
+                    {`{"error": "Prefix 'admin' dilindungi oleh sistem. Silakan gunakan nama lain."}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-2.5 px-3 font-mono text-red-400 font-semibold">401 Unauthorized</td>
+                  <td className="py-2.5 px-3 text-zinc-400">API Key salah atau tidak ada</td>
+                  <td className="py-2.5 px-3 font-mono text-[11px] text-zinc-400">
+                    {`{"error": "Unauthorized"}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-2.5 px-3 font-mono text-red-400 font-semibold">403 Forbidden</td>
+                  <td className="py-2.5 px-3 text-zinc-400">Email milik user lain</td>
+                  <td className="py-2.5 px-3 font-mono text-[11px] text-zinc-400">
+                    {`{"error": "Forbidden: Anda tidak memiliki akses ke inbox ini."}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="py-2.5 px-3 font-mono text-amber-400 font-semibold">409 Conflict</td>
+                  <td className="py-2.5 px-3 text-zinc-400">Prefix sudah diklaim user lain</td>
+                  <td className="py-2.5 px-3 font-mono text-[11px] text-zinc-400">
+                    {`{"error": "Alamat email ini sudah digunakan oleh pengguna lain. Silakan pilih prefix lain."}`}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
