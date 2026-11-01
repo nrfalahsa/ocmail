@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useSession } from "next-auth/react";
 import {
   Mail,
   Copy,
@@ -14,7 +15,9 @@ import {
   FileText,
   Eye,
   AlertCircle,
-  X
+  X,
+  ChevronDown,
+  History
 } from "lucide-react";
 
 interface Message {
@@ -31,7 +34,17 @@ interface Message {
   otp?: string;
 }
 
+interface SavedInbox {
+  id: string;
+  address: string;
+  prefix: string;
+  domain: string;
+  isCustom: boolean;
+  createdAt: string;
+}
+
 export default function HomePage() {
+  const { data: session } = useSession();
   const [domains, setDomains] = useState<string[]>(["ocmail.me", "oneclash.xyz"]);
   const [selectedDomain, setSelectedDomain] = useState<string>("ocmail.me");
   const [customPrefix, setCustomPrefix] = useState<string>("");
@@ -47,15 +60,78 @@ export default function HomePage() {
   const [lastChecked, setLastChecked] = useState<string>("");
   const [mounted, setMounted] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [domainDropdownOpen, setDomainDropdownOpen] = useState(false);
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
+  const [userInboxes, setUserInboxes] = useState<SavedInbox[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
+  const domainDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close domain dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (domainDropdownRef.current && !domainDropdownRef.current.contains(e.target as Node)) {
+        setDomainDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     setMounted(true);
     setLastChecked(new Date().toLocaleTimeString());
   }, []);
 
-  // Fetch allowed domains on mount
+  // Load user's saved inboxes if logged in
+  useEffect(() => {
+    if (session?.user) {
+      loadUserInboxes();
+    } else {
+      setUserInboxes([]);
+    }
+  }, [session]);
+
+  async function loadUserInboxes() {
+    setLoadingHistory(true);
+    try {
+      const res = await fetch("/api/v1/inboxes");
+      if (res.ok) {
+        const d = await res.json();
+        setUserInboxes(d.inboxes || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }
+
+  async function handleSelectSavedInbox(inbox: SavedInbox) {
+    setActiveAddress(inbox.address);
+    localStorage.setItem("ocmail_active_inbox", inbox.address);
+    setHistoryModalOpen(false);
+    setMessages([]);
+    setSelectedMessage(null);
+  }
+
+  async function handleDeleteSavedInbox(addr: string, e: React.MouseEvent) {
+    e.stopPropagation();
+    if (!confirm(`Hapus email ${addr} dari akun Anda?`)) return;
+    try {
+      const res = await fetch(`/api/v1/inboxes/${encodeURIComponent(addr)}`, { method: "DELETE" });
+      if (res.ok) {
+        setUserInboxes((prev) => prev.filter((i) => i.address !== addr));
+        if (activeAddress.toLowerCase() === addr.toLowerCase()) {
+          localStorage.removeItem("ocmail_active_inbox");
+          handleCreateInbox(false);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
   useEffect(() => {
     async function loadDomains() {
       try {
@@ -119,6 +195,9 @@ export default function HomePage() {
         setErrorMessage(null);
         if (useCustom) {
           setCustomPrefix("");
+        }
+        if (session?.user) {
+          loadUserInboxes();
         }
       } else {
         const errData = await res.json().catch(() => ({}));
@@ -223,6 +302,18 @@ export default function HomePage() {
               <span className="text-[11px] text-zinc-500 font-mono">
                 auto-refresh 3s
               </span>
+
+              {session?.user && (
+                <button
+                  type="button"
+                  onClick={() => setHistoryModalOpen(true)}
+                  className="ml-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/80 transition"
+                  title="Lihat riwayat email yang pernah dibuat"
+                >
+                  <History className="h-3 w-3 text-blue-400" />
+                  Riwayat ({userInboxes.length})
+                </button>
+              )}
             </div>
 
             {/* Monospace Address Display */}
@@ -266,7 +357,7 @@ export default function HomePage() {
           </div>
 
           {/* Generator Controls */}
-          <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800/80 lg:w-[420px] space-y-3">
+          <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800/80 lg:w-[440px] space-y-3">
             <div className="flex items-center justify-between text-xs font-medium text-zinc-400">
               <span className="text-zinc-400 text-[11px]">Mode Alamat:</span>
               <div className="flex rounded-md bg-zinc-900 p-0.5 border border-zinc-800 text-xs">
@@ -305,17 +396,43 @@ export default function HomePage() {
                 </div>
               ) : null}
 
-              <select
-                value={selectedDomain}
-                onChange={(e) => setSelectedDomain(e.target.value)}
-                className="px-2.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200 text-xs font-mono focus:outline-none focus:border-zinc-700"
-              >
-                {domains.map((dom) => (
-                  <option key={dom} value={dom}>
-                    @{dom}
-                  </option>
-                ))}
-              </select>
+              {/* Custom Domain Selector Dropdown */}
+              <div className="relative" ref={domainDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setDomainDropdownOpen(!domainDropdownOpen)}
+                  className="w-full sm:w-auto px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200 text-xs font-mono flex items-center justify-between gap-2 hover:bg-zinc-800/80 transition"
+                >
+                  <span>@{selectedDomain}</span>
+                  <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
+                </button>
+
+                {domainDropdownOpen && (
+                  <div className="absolute right-0 mt-1.5 w-48 rounded-xl bg-zinc-900 border border-zinc-800 shadow-xl py-1 z-40 text-xs font-mono">
+                    <div className="px-3 py-1 text-[10px] text-zinc-500 uppercase tracking-wider border-b border-zinc-800/60 font-sans">
+                      Pilih Domain
+                    </div>
+                    {domains.map((dom) => (
+                      <button
+                        key={dom}
+                        type="button"
+                        onClick={() => {
+                          setSelectedDomain(dom);
+                          setDomainDropdownOpen(false);
+                        }}
+                        className={`w-full px-3 py-1.5 text-left flex items-center justify-between transition ${
+                          selectedDomain === dom
+                            ? "bg-blue-600/10 text-blue-400 font-semibold"
+                            : "text-zinc-300 hover:bg-zinc-800/60"
+                        }`}
+                      >
+                        <span>@{dom}</span>
+                        {selectedDomain === dom && <Check className="h-3 w-3 text-blue-400" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               <button
                 type="button"
@@ -525,6 +642,105 @@ export default function HomePage() {
           )}
         </div>
       </div>
+      {/* Modal Riwayat Email Pengguna */}
+      {historyModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-lg rounded-2xl bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="p-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/60">
+              <div className="flex items-center gap-2">
+                <History className="h-4 w-4 text-blue-400" />
+                <h3 className="text-sm font-semibold text-white">Riwayat Akun Email Anda</h3>
+                <span className="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 font-mono">
+                  {userInboxes.length}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setHistoryModalOpen(false)}
+                className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {loadingHistory ? (
+                <div className="py-12 text-center text-xs text-zinc-500">Memuat riwayat...</div>
+              ) : userInboxes.length === 0 ? (
+                <div className="py-12 text-center text-xs text-zinc-500">
+                  Belum ada riwayat email. Buat email kustom atau random untuk menyimpannya di sini.
+                </div>
+              ) : (
+                userInboxes.map((item) => {
+                  const isCurrent = activeAddress.toLowerCase() === item.address.toLowerCase();
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => handleSelectSavedInbox(item)}
+                      className={`group p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-3 ${
+                        isCurrent
+                          ? "bg-blue-950/20 border-blue-500/40 text-blue-300"
+                          : "bg-zinc-950/60 border-zinc-800/80 hover:bg-zinc-800/40 hover:border-zinc-700 text-zinc-200"
+                      }`}
+                    >
+                      <div className="space-y-0.5 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-semibold text-white truncate">
+                            {item.address}
+                          </span>
+                          {item.isCustom ? (
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-800 text-blue-400 font-medium">
+                              Custom
+                            </span>
+                          ) : (
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-400">
+                              Random
+                            </span>
+                          )}
+                          {isCurrent && (
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-medium">
+                              Sedang Digunakan
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-zinc-500 font-mono">
+                          Dibuat: {new Date(item.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectSavedInbox(item);
+                          }}
+                          className="px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition"
+                          title="Gunakan email ini"
+                        >
+                          Gunakan
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => handleDeleteSavedInbox(item.address, e)}
+                          className="p-1.5 rounded-md text-zinc-500 hover:text-red-400 hover:bg-zinc-800 transition"
+                          title="Hapus dari akun"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="p-3 bg-zinc-950/80 border-t border-zinc-800/80 text-[11px] text-zinc-500 text-center">
+              Klik &quot;Gunakan&quot; untuk mengalihkan kotak masuk ke alamat tersebut.
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
