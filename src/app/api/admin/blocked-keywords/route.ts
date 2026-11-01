@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/api-guard";
 import { prisma } from "@/lib/prisma";
@@ -25,55 +27,59 @@ export const DEFAULT_BLOCKED_WORDS = [
 
 export async function getBlockedKeywords(): Promise<string[]> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const client = prisma as any;
-    const setting = await client.systemSetting.findUnique({
+    const setting = await prisma.systemSetting.findUnique({
       where: { key: "blocked_keywords" },
     });
     if (setting?.value) {
-      return (setting.value as string)
+      return setting.value
         .split(",")
         .map((w: string) => w.trim().toLowerCase())
         .filter(Boolean);
     }
-  } catch {
-    // fallback
+  } catch (err) {
+    console.warn("Failed to get blocked keywords from DB, using fallback:", err);
   }
   return DEFAULT_BLOCKED_WORDS;
 }
 
 export async function GET(req: NextRequest) {
-  const authCtx = await authenticateRequest(req);
-  if (authCtx.role !== "ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  try {
+    const authCtx = await authenticateRequest(req);
+    if (authCtx.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-  const keywords = await getBlockedKeywords();
-  return NextResponse.json({ keywords, raw: keywords.join(", ") });
+    const keywords = await getBlockedKeywords();
+    return NextResponse.json({ keywords, raw: keywords.join(", ") });
+  } catch (err) {
+    console.error("GET blocked-keywords error:", err);
+    return NextResponse.json({
+      keywords: DEFAULT_BLOCKED_WORDS,
+      raw: DEFAULT_BLOCKED_WORDS.join(", "),
+    });
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const authCtx = await authenticateRequest(req);
-  if (authCtx.role !== "ADMIN") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  const body = await req.json().catch(() => ({}));
-  const rawInput = String(body.keywords || "");
-
-  const cleanList = Array.from(
-    new Set(
-      rawInput
-        .split(/[\n,]+/)
-        .map((w) => w.trim().toLowerCase().replace(/[^a-z0-9._-]/g, ""))
-        .filter((w) => w.length >= 2)
-    )
-  );
-
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const client = prisma as any;
-    const updated = await client.systemSetting.upsert({
+    const authCtx = await authenticateRequest(req);
+    if (authCtx.role !== "ADMIN") {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const rawInput = String(body.keywords || "");
+
+    const cleanList = Array.from(
+      new Set(
+        rawInput
+          .split(/[\n,]+/)
+          .map((w) => w.trim().toLowerCase().replace(/[^a-z0-9._-]/g, ""))
+          .filter((w) => w.length >= 2)
+      )
+    );
+
+    const updated = await prisma.systemSetting.upsert({
       where: { key: "blocked_keywords" },
       update: { value: cleanList.join(",") },
       create: { key: "blocked_keywords", value: cleanList.join(",") },
@@ -85,8 +91,9 @@ export async function POST(req: NextRequest) {
       raw: updated.value,
     });
   } catch (err) {
+    console.error("POST blocked-keywords error:", err);
     return NextResponse.json(
-      { error: "Failed to update blocked keywords", details: String(err) },
+      { error: "Tabel SystemSetting belum ada di database. Silakan jalankan 'pnpm exec prisma db push'.", details: String(err) },
       { status: 500 }
     );
   }

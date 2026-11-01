@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/api-guard";
 import { createWorkerInbox } from "@/lib/cf-client";
