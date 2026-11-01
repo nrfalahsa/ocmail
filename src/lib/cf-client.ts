@@ -1,4 +1,5 @@
 import { extractOtp } from "./otp";
+import { parseRawEmail } from "./email-parser";
 
 export interface MailMessage {
   id: string;
@@ -7,6 +8,9 @@ export interface MailMessage {
   subject: string;
   date: string;
   body: string;
+  html?: string;
+  text?: string;
+  isHtml?: boolean;
   received_at: number;
   otp?: string;
 }
@@ -75,11 +79,17 @@ export async function getWorkerMessages(address: string): Promise<MailMessage[]>
     rawMessages = localMockStorage.get(cleanAddr) || [];
   }
 
-  // Attach extracted OTP
-  return rawMessages.map((msg) => ({
-    ...msg,
-    otp: extractOtp(msg.subject, msg.body),
-  }));
+  // Attach extracted OTP and parsed HTML/text
+  return rawMessages.map((msg) => {
+    const parsed = parseRawEmail(msg.body);
+    return {
+      ...msg,
+      html: parsed.html,
+      text: parsed.text,
+      isHtml: parsed.isHtml,
+      otp: extractOtp(msg.subject, msg.body),
+    };
+  });
 }
 
 export async function deleteWorkerInbox(address: string): Promise<boolean> {

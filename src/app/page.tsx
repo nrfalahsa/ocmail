@@ -22,6 +22,9 @@ interface Message {
   subject: string;
   date: string;
   body: string;
+  html?: string;
+  text?: string;
+  isHtml?: boolean;
   received_at: number;
   otp?: string;
 }
@@ -39,9 +42,15 @@ export default function HomePage() {
   const [copiedAddr, setCopiedAddr] = useState<boolean>(false);
   const [copiedOtp, setCopiedOtp] = useState<boolean>(false);
   const [viewTab, setViewTab] = useState<"preview" | "raw">("preview");
-  const [lastChecked, setLastChecked] = useState<Date>(new Date());
+  const [lastChecked, setLastChecked] = useState<string>("");
+  const [mounted, setMounted] = useState(false);
 
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    setLastChecked(new Date().toLocaleTimeString());
+  }, []);
 
   // Fetch allowed domains on mount
   useEffect(() => {
@@ -122,7 +131,7 @@ export default function HomePage() {
       if (res.ok) {
         const list: Message[] = await res.json();
         setMessages(list);
-        setLastChecked(new Date());
+        setLastChecked(new Date().toLocaleTimeString());
 
         // Update selected message if open
         if (selectedMessage) {
@@ -303,7 +312,7 @@ export default function HomePage() {
               </span>
             </div>
             <span className="text-[11px] text-zinc-500">
-              Cek: {lastChecked.toLocaleTimeString()}
+              {mounted && lastChecked ? `Cek: ${lastChecked}` : ""}
             </span>
           </div>
 
@@ -336,7 +345,7 @@ export default function HomePage() {
                         {msg.from}
                       </span>
                       <span className="text-[11px] text-zinc-500 whitespace-nowrap">
-                        {new Date(msg.received_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {mounted ? new Date(msg.received_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
                       </span>
                     </div>
 
@@ -455,9 +464,20 @@ export default function HomePage() {
               {/* Message Body Content */}
               <div className="flex-1 p-6 overflow-y-auto max-h-[500px]">
                 {viewTab === "preview" ? (
-                  <div className="prose prose-invert max-w-none text-zinc-300 text-sm whitespace-pre-wrap leading-relaxed font-sans">
-                    {selectedMessage.body}
-                  </div>
+                  selectedMessage.html ? (
+                    <div className="rounded-xl overflow-hidden bg-white border border-zinc-800">
+                      <iframe
+                        srcDoc={selectedMessage.html}
+                        title="Email Preview"
+                        sandbox="allow-popups allow-popups-to-escape-sandbox"
+                        className="w-full min-h-[460px] border-0"
+                      />
+                    </div>
+                  ) : (
+                    <div className="prose prose-invert max-w-none text-zinc-300 text-sm whitespace-pre-wrap leading-relaxed font-sans">
+                      {selectedMessage.text || selectedMessage.body}
+                    </div>
+                  )
                 ) : (
                   <pre className="p-4 rounded-xl bg-black/80 border border-zinc-800 text-xs font-mono text-zinc-400 overflow-x-auto whitespace-pre-wrap">
                     {selectedMessage.body}
