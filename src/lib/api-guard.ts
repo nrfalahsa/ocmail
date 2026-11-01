@@ -8,15 +8,25 @@ export interface AuthContext {
   role: "USER" | "ADMIN" | "ANONYMOUS";
   isApiKey: boolean;
   apiKeyId?: string;
+  isInvalidKey?: boolean;
 }
 
 export async function authenticateRequest(req: NextRequest): Promise<AuthContext> {
   // 1. Check API Key header
   const authHeader = req.headers.get("authorization");
   const xApiKey = req.headers.get("x-api-key");
-  const rawKey = xApiKey || (authHeader?.startsWith("Bearer ocm_") ? authHeader.replace("Bearer ", "").trim() : null);
+  const rawKey = xApiKey || (authHeader?.startsWith("Bearer ") ? authHeader.replace("Bearer ", "").trim() : null);
 
-  if (rawKey && rawKey.startsWith("ocm_")) {
+  if (rawKey) {
+    if (!rawKey.startsWith("ocm_")) {
+      return {
+        userId: null,
+        role: "ANONYMOUS",
+        isApiKey: true,
+        isInvalidKey: true,
+      };
+    }
+
     const keyHash = hashApiKey(rawKey);
     try {
       const foundKey = await prisma.apiKey.findUnique({
@@ -41,6 +51,14 @@ export async function authenticateRequest(req: NextRequest): Promise<AuthContext
           role: foundKey.user.role,
           isApiKey: true,
           apiKeyId: foundKey.id,
+          isInvalidKey: false,
+        };
+      } else {
+        return {
+          userId: null,
+          role: "ANONYMOUS",
+          isApiKey: true,
+          isInvalidKey: true,
         };
       }
     } catch {

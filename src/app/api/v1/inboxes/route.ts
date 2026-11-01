@@ -8,6 +8,9 @@ import { getBlockedKeywords } from "@/app/api/admin/blocked-keywords/route";
 
 export async function GET(req: NextRequest) {
   const authCtx = await authenticateRequest(req);
+  if (authCtx.isInvalidKey) {
+    return NextResponse.json({ error: "API Key tidak valid atau tidak terdaftar." }, { status: 401 });
+  }
   if (!authCtx.userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -25,6 +28,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const authCtx = await authenticateRequest(req);
+  if (authCtx.isInvalidKey) {
+    return NextResponse.json({ error: "API Key tidak valid atau tidak terdaftar." }, { status: 401 });
+  }
   const body = await req.json().catch(() => ({}));
   const { prefix, domain } = body;
 

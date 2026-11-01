@@ -11,6 +11,10 @@ export async function DELETE(
   const cleanAddr = decodeURIComponent(address).toLowerCase().trim();
   const authCtx = await authenticateRequest(req);
 
+  if (authCtx.isInvalidKey) {
+    return NextResponse.json({ error: "API Key tidak valid atau tidak terdaftar." }, { status: 401 });
+  }
+
   try {
     // If authenticated, check ownership or admin
     if (authCtx.userId && authCtx.role !== "ADMIN") {

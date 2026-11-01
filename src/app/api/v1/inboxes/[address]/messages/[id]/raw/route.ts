@@ -11,6 +11,10 @@ export async function GET(
   const cleanAddr = decodeURIComponent(address).toLowerCase().trim();
   const authCtx = await authenticateRequest(req);
 
+  if (authCtx.isInvalidKey) {
+    return NextResponse.json({ error: "API Key tidak valid atau tidak terdaftar." }, { status: 401 });
+  }
+
   try {
     const dbInbox = await prisma.inbox.findUnique({
       where: { address: cleanAddr },
