@@ -83,22 +83,19 @@ export async function POST(req: NextRequest) {
 
     const workerResult = await createWorkerInbox(cleanPrefix, chosenDomain);
 
-    // Save to DB if user is logged in
-    let record = null;
-    if (authCtx.userId) {
-      record = await prisma.inbox.upsert({
-        where: { address: workerResult.address },
-        update: { userId: authCtx.userId },
-        create: {
-          address: workerResult.address,
-          prefix: workerResult.prefix,
-          domain: workerResult.domain,
-          isCustom,
-          userId: authCtx.userId,
-          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h
-        },
-      }).catch(() => null);
-    }
+    // Save to DB (baik user login maupun anonim agar terhitung di statistik admin)
+    const record = await prisma.inbox.upsert({
+      where: { address: workerResult.address },
+      update: authCtx.userId ? { userId: authCtx.userId } : {},
+      create: {
+        address: workerResult.address,
+        prefix: workerResult.prefix,
+        domain: workerResult.domain,
+        isCustom,
+        userId: authCtx.userId || null,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24h
+      },
+    }).catch(() => null);
 
     return NextResponse.json(
       {
