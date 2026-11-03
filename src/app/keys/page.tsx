@@ -221,7 +221,7 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
       )}
 
       {/* Create Key Form */}
-      <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800">
+      <div className="p-6 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md">
         <h2 className="text-base font-semibold text-white mb-4">Buat API Key Baru</h2>
         <form onSubmit={handleCreateKey} className="flex flex-col sm:flex-row gap-3">
           <input
@@ -229,13 +229,13 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
             placeholder="Contoh: Farm Script"
             value={newKeyName}
             onChange={(e) => setNewKeyName(e.target.value)}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-cyan-500 transition"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[#090d16] border border-slate-800 text-white text-sm focus:outline-none focus:border-blue-500 transition"
             required
           />
           <button
             type="submit"
             disabled={creating}
-            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium flex items-center justify-center gap-1.5 transition disabled:opacity-50 shadow-sm"
           >
             <Plus className="h-4 w-4" />
             {creating ? "Membuat..." : "Buat Key"}
@@ -244,9 +244,9 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
       </div>
 
       {/* Keys Table */}
-      <div className="rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-900/30">
-        <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-zinc-200">Daftar API Key Aktif ({keys.length})</h2>
+      <div className="rounded-2xl border border-slate-800 overflow-hidden bg-[#0f172a] shadow-md">
+        <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-[#090d16]/70">
+          <h2 className="text-sm font-semibold text-slate-200">Daftar API Key Aktif ({keys.length})</h2>
         </div>
         {keys.length === 0 ? (
           <div className="p-8 text-center text-sm text-zinc-500">
@@ -301,7 +301,7 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
       </div>
 
       {/* Code Snippets & Documentation */}
-      <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800 space-y-6">
+      <div className="p-6 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md space-y-6">
         <div>
           <div className="flex items-center gap-2 text-white font-semibold text-base">
             <Terminal className="h-5 w-5 text-blue-400" />

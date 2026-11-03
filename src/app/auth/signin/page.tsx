@@ -1,23 +1,20 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { Mail } from "lucide-react";
 
 export default function SignInPage() {
   return (
-    <div className="min-h-[75vh] flex items-center justify-center">
-      <div className="w-full max-w-md p-8 rounded-2xl bg-zinc-900/60 border border-zinc-800 shadow-2xl backdrop-blur">
-        <div className="text-center mb-8">
-          <div className="inline-flex h-10 w-10 rounded-xl bg-zinc-800 border border-zinc-700/80 items-center justify-center text-white mb-3">
-            <Mail className="h-5 w-5" />
-          </div>
-          <h1 className="text-xl font-bold tracking-tight text-white">Masuk ke ocmail</h1>
+    <div className="min-h-[75vh] flex items-center justify-center p-4">
+      <div className="w-full max-w-sm p-8 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-2xl space-y-6">
+        <div className="text-center space-y-3">
+          <img src="/brand/ocmail-icon-color.svg" alt="ocmail logo" className="h-12 w-12 mx-auto" />
+          <h1 className="text-xl font-bold tracking-tight text-white font-sans">Masuk ke ocmail</h1>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           <button
             onClick={() => signIn("google", { callbackUrl: "/" })}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl font-medium text-sm bg-white hover:bg-zinc-100 text-zinc-900 transition shadow-sm"
+            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl font-medium text-xs bg-white hover:bg-slate-100 text-slate-900 transition shadow-sm"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path

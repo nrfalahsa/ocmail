@@ -15,8 +15,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ocmail — Disposable TempMail Platform",
-  description: "Platform disposable email cepat, modern, dan scalable dengan OTP extractor & API key automation.",
+  title: "ocmail — Disposable Email Platform",
+  description:
+    "Platform disposable email / tempmail modern, berkinerja tinggi, dan dirancang untuk kebutuhan komunitas serta automasi skrip/bot.",
+  icons: {
+    icon: [
+      { url: "/brand/ocmail-icon-color.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: "/brand/ocmail-icon-color.svg",
+    apple: "/brand/ocmail-icon-color-2048.png",
+  },
 };
 
 export default function RootLayout({
@@ -27,15 +36,21 @@ export default function RootLayout({
   return (
     <html lang="id" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950 text-zinc-100 min-h-screen flex flex-col selection:bg-cyan-500/20 selection:text-cyan-300`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#090d16] text-slate-100 min-h-screen flex flex-col selection:bg-blue-600/30 selection:text-blue-200`}
       >
         <Providers>
           <Navbar />
           <main className="flex-1 w-full max-w-[1500px] mx-auto p-4 sm:p-6 lg:p-8">
             {children}
           </main>
-          <footer className="border-t border-zinc-900 py-6 text-center text-xs text-zinc-500">
-            <p>ocmail &copy; {new Date().getFullYear()}</p>
+          <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <img src="/brand/ocmail-icon-color.svg" alt="ocmail" className="h-4 w-4 opacity-70" />
+              <span className="font-medium text-slate-400">ocmail</span>
+            </div>
+            <p className="text-[11px] text-slate-500">
+              Disposable Email Platform for Communities & Automation &copy; {new Date().getFullYear()}
+            </p>
           </footer>
         </Providers>
       </body>

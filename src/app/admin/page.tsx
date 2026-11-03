@@ -169,8 +169,8 @@ export default function AdminPage() {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
-          <div className="flex items-center justify-between text-zinc-400 mb-2">
+        <div className="p-5 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs uppercase font-medium">Total Users</span>
             <Users className="h-4 w-4 text-blue-400" />
           </div>
@@ -179,8 +179,8 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
-          <div className="flex items-center justify-between text-zinc-400 mb-2">
+        <div className="p-5 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs uppercase font-medium">Total Inboxes</span>
             <Mail className="h-4 w-4 text-blue-400" />
           </div>
@@ -189,8 +189,8 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
-          <div className="flex items-center justify-between text-zinc-400 mb-2">
+        <div className="p-5 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs uppercase font-medium">Active API Keys</span>
             <Key className="h-4 w-4 text-amber-400" />
           </div>
@@ -199,12 +199,12 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-zinc-800">
-          <div className="flex items-center justify-between text-zinc-400 mb-2">
+        <div className="p-5 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs uppercase font-medium">API Requests Handled</span>
             <Activity className="h-4 w-4 text-emerald-400" />
           </div>
-          <div className="text-2xl font-bold text-emerald-400 font-mono">
+          <div className="text-2xl font-bold text-blue-400 font-mono">
             {stats?.totalApiRequests.toLocaleString() ?? 0}
           </div>
         </div>
@@ -318,10 +318,10 @@ export default function AdminPage() {
       ) : (
         <div className="space-y-6">
           {/* Blocked Keywords Config Card */}
-          <div className="p-6 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-4">
+          <div className="p-6 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md space-y-4">
             <div>
               <h3 className="text-sm font-semibold text-white">Filter Prefix Kustom Terlarang (Reserved Words)</h3>
-              <p className="text-xs text-zinc-400 mt-1">
+              <p className="text-xs text-slate-400 mt-1">
                 Kata-kata di bawah ini tidak dapat digunakan sebagai prefix email kustom oleh pengguna umum (misal: <code>admin@...</code>, <code>support@...</code>). Pisahkan kata dengan tanda koma atau baris baru.
               </p>
             </div>
@@ -332,17 +332,17 @@ export default function AdminPage() {
                 value={blockedWordsInput}
                 onChange={(e) => setBlockedWordsInput(e.target.value)}
                 placeholder="admin, support, billing, root, abuse..."
-                className="w-full p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-mono text-zinc-200 focus:outline-none focus:border-zinc-700"
+                className="w-full p-3.5 rounded-xl bg-[#090d16] border border-slate-800 text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500"
               />
 
               <div className="flex items-center justify-between">
-                <span className="text-xs text-emerald-400 font-medium">
+                <span className="text-xs text-blue-400 font-medium">
                   {keywordStatus || ""}
                 </span>
                 <button
                   type="submit"
                   disabled={savingKeywords}
-                  className="px-4 py-2 rounded-lg bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-medium transition disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition disabled:opacity-50 shadow-sm"
                 >
                   {savingKeywords ? "Menyimpan..." : "Simpan Perubahan"}
                 </button>
@@ -351,16 +351,16 @@ export default function AdminPage() {
           </div>
 
           {/* Cloudflare Worker Status */}
-          <div className="p-6 rounded-xl bg-zinc-900/60 border border-zinc-800 space-y-4">
+          <div className="p-6 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md space-y-4">
             <h3 className="text-sm font-semibold text-white">Status Bridge Cloudflare Worker</h3>
             <div className="space-y-3 text-xs">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-950 border border-zinc-800">
-                <span className="text-zinc-400">Cloudflare Worker Script</span>
-                <span className="font-mono text-zinc-300">cloudflare/worker.js</span>
+              <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#090d16] border border-slate-800">
+                <span className="text-slate-400">Cloudflare Worker Script</span>
+                <span className="font-mono text-slate-300">cloudflare/worker.js</span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-950 border border-zinc-800">
-                <span className="text-zinc-400">Mode Bridge</span>
-                <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+              <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#090d16] border border-slate-800">
+                <span className="text-slate-400">Mode Bridge</span>
+                <span className="text-[11px] px-2.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
                   Cloudflare Email Routing + KV Store
                 </span>
               </div>

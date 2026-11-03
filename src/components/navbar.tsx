@@ -33,14 +33,12 @@ export function Navbar() {
   }, []);
 
   return (
-    <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur sticky top-0 z-50">
+    <header className="border-b border-slate-800/80 bg-[#090d16]/80 backdrop-blur sticky top-0 z-50">
       <div className="max-w-[1500px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <NextLink href="/" className="flex items-center gap-2 font-semibold text-sm tracking-tight text-zinc-100 hover:text-white transition">
-            <div className="h-6 w-6 rounded-md bg-zinc-800 border border-zinc-700/80 flex items-center justify-center text-zinc-300">
-              <Mail className="h-3.5 w-3.5" />
-            </div>
-            <span>ocmail</span>
+          <NextLink href="/" className="flex items-center gap-2.5 font-bold text-base tracking-tight text-white hover:opacity-90 transition">
+            <img src="/brand/ocmail-icon-color.svg" alt="ocmail" className="h-7 w-7" />
+            <span className="font-bold tracking-tight text-white text-base">ocmail</span>
           </NextLink>
 
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
@@ -48,11 +46,11 @@ export function Navbar() {
               href="/"
               className={`px-3.5 py-1.5 rounded-lg transition flex items-center gap-2 ${
                 pathname === "/"
-                  ? "bg-zinc-800 text-white"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+                  ? "bg-slate-800 text-white font-medium"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/50"
               }`}
             >
-              <Mail className="h-4 w-4" />
+              <Mail className="h-4 w-4 text-blue-400" />
               TempMail
             </NextLink>
 
@@ -60,11 +58,11 @@ export function Navbar() {
               href="/keys"
               className={`px-3.5 py-1.5 rounded-lg transition flex items-center gap-2 ${
                 pathname === "/keys"
-                  ? "bg-zinc-800 text-white"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+                  ? "bg-slate-800 text-white font-medium"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/50"
               }`}
             >
-              <Key className="h-4 w-4" />
+              <Key className="h-4 w-4 text-blue-400" />
               API Keys
             </NextLink>
 
@@ -72,11 +70,11 @@ export function Navbar() {
               href="/rules"
               className={`px-3.5 py-1.5 rounded-lg transition flex items-center gap-2 ${
                 pathname === "/rules"
-                  ? "bg-zinc-800 text-white"
-                  : "text-zinc-400 hover:text-white hover:bg-zinc-900"
+                  ? "bg-slate-800 text-white font-medium"
+                  : "text-slate-400 hover:text-white hover:bg-slate-800/50"
               }`}
             >
-              <ShieldCheck className="h-4 w-4" />
+              <ShieldCheck className="h-4 w-4 text-blue-400" />
               Aturan & Keamanan
             </NextLink>
 
@@ -85,8 +83,8 @@ export function Navbar() {
                 href="/admin"
                 className={`px-3.5 py-1.5 rounded-lg transition flex items-center gap-2 ${
                   pathname.startsWith("/admin")
-                    ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
-                    : "text-zinc-400 hover:text-cyan-400 hover:bg-zinc-900"
+                    ? "bg-blue-600/10 text-blue-400 border border-blue-500/20"
+                    : "text-slate-400 hover:text-blue-400 hover:bg-slate-800/50"
                 }`}
               >
                 <ShieldCheck className="h-4 w-4" />

@@ -3,14 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import {
-  Mail,
   Copy,
   Check,
   RefreshCw,
   Trash2,
   Sparkles,
   Download,
-  Inbox as InboxIcon,
   CheckCircle,
   FileText,
   Eye,
@@ -294,15 +292,15 @@ export default function HomePage() {
       )}
 
       {/* Top Banner / Generator Card */}
-      <div className="rounded-xl bg-zinc-900/50 p-5 sm:p-6 border border-zinc-800">
+      <div className="rounded-2xl bg-[#0f172a] p-5 sm:p-6 border border-slate-800/90 shadow-xl">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-          <div className="space-y-2 flex-1">
+          <div className="space-y-2.5 flex-1">
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                Active
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+                Live Inbox
               </span>
-              <span className="text-[11px] text-zinc-500 font-mono">
+              <span className="text-[11px] text-slate-500 font-mono">
                 auto-refresh 3s
               </span>
 
@@ -310,7 +308,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setHistoryModalOpen(true)}
-                  className="ml-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/80 transition"
+                  className="ml-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/80 transition"
                   title="Lihat riwayat email yang pernah dibuat"
                 >
                   <History className="h-3 w-3 text-blue-400" />
@@ -323,15 +321,15 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center gap-2">
               <div
                 onClick={copyAddress}
-                className="cursor-pointer group flex items-center gap-2.5 px-3.5 py-2 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-zinc-700 transition"
+                className="cursor-pointer group flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#090d16] border border-slate-800 hover:border-blue-500/60 transition shadow-inner"
               >
-                <Mail className="h-4 w-4 text-zinc-400 group-hover:text-zinc-200 transition" />
-                <span className="font-mono text-base font-semibold text-zinc-100 select-all">
+                <img src="/brand/ocmail-icon-color.svg" alt="" className="h-4 w-4" />
+                <span className="font-mono text-base font-semibold text-white select-all">
                   {activeAddress || "Membuat inbox..."}
                 </span>
                 <button
                   type="button"
-                  className="p-1 rounded text-zinc-400 hover:text-white transition"
+                  className="p-1 rounded text-slate-400 hover:text-white transition"
                   title="Salin email"
                 >
                   {copiedAddr ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
@@ -342,15 +340,15 @@ export default function HomePage() {
                 <button
                   onClick={() => fetchMessages(activeAddress)}
                   disabled={loadingMessages}
-                  className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200 transition"
+                  className="p-2.5 rounded-xl bg-[#090d16] border border-slate-800 text-slate-400 hover:text-white transition"
                   title="Refresh inbox"
                 >
-                  <RefreshCw className={`h-4 w-4 ${loadingMessages ? "animate-spin text-zinc-200" : ""}`} />
+                  <RefreshCw className={`h-4 w-4 ${loadingMessages ? "animate-spin text-blue-400" : ""}`} />
                 </button>
 
                 <button
                   onClick={handleDeleteCurrentInbox}
-                  className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-red-400 transition"
+                  className="p-2.5 rounded-xl bg-[#090d16] border border-slate-800 text-slate-400 hover:text-red-400 transition"
                   title="Hapus inbox"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -360,14 +358,14 @@ export default function HomePage() {
           </div>
 
           {/* Generator Controls */}
-          <div className="bg-zinc-950 p-3.5 rounded-xl border border-zinc-800/80 lg:w-[440px] space-y-3">
-            <div className="flex items-center justify-between text-xs font-medium text-zinc-400">
-              <span className="text-zinc-400 text-[11px]">Mode Alamat:</span>
-              <div className="flex rounded-md bg-zinc-900 p-0.5 border border-zinc-800 text-xs">
+          <div className="bg-[#090d16] p-4 rounded-xl border border-slate-800/80 lg:w-[440px] space-y-3">
+            <div className="flex items-center justify-between text-xs font-medium text-slate-400">
+              <span className="text-[11px] text-slate-400">Mode Alamat:</span>
+              <div className="flex rounded-lg bg-slate-900 p-0.5 border border-slate-800 text-xs">
                 <button
                   type="button"
                   onClick={() => setIsCustomMode(false)}
-                  className={`px-2.5 py-1 rounded transition text-xs ${!isCustomMode ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:text-white"
+                  className={`px-3 py-1 rounded-md transition text-xs ${!isCustomMode ? "bg-blue-600 text-white font-medium" : "text-slate-400 hover:text-white"
                     }`}
                 >
                   Random
@@ -375,7 +373,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setIsCustomMode(true)}
-                  className={`px-2.5 py-1 rounded transition text-xs ${isCustomMode ? "bg-zinc-800 text-white font-medium" : "text-zinc-400 hover:text-white"
+                  className={`px-3 py-1 rounded-md transition text-xs ${isCustomMode ? "bg-blue-600 text-white font-medium" : "text-slate-400 hover:text-white"
                     }`}
                 >
                   Custom
@@ -385,13 +383,13 @@ export default function HomePage() {
 
             <div className="flex flex-col sm:flex-row gap-2">
               {isCustomMode ? (
-                <div className="flex-1 rounded-lg bg-zinc-900 border border-zinc-800 px-3 py-1.5 text-xs">
+                <div className="flex-1 rounded-lg bg-slate-900 border border-slate-800 px-3 py-1.5 text-xs">
                   <input
                     type="text"
                     placeholder="nama-kamu"
                     value={customPrefix}
                     onChange={(e) => setCustomPrefix(e.target.value.toLowerCase().replace(/[^a-z0-9._-]/g, ""))}
-                    className="w-full bg-transparent text-white font-mono placeholder-zinc-500 focus:outline-none"
+                    className="w-full bg-transparent text-white font-mono placeholder-slate-500 focus:outline-none"
                   />
                 </div>
               ) : null}
@@ -401,15 +399,15 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => setDomainDropdownOpen(!domainDropdownOpen)}
-                  className="w-full sm:w-auto px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200 text-xs font-mono flex items-center justify-between gap-2 hover:bg-zinc-800/80 transition"
+                  className="w-full sm:w-auto px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 text-xs font-mono flex items-center justify-between gap-2 hover:bg-slate-800 transition"
                 >
                   <span>@{selectedDomain}</span>
-                  <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
+                  <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
                 </button>
 
                 {domainDropdownOpen && (
-                  <div className="absolute right-0 mt-1.5 w-48 rounded-xl bg-zinc-900 border border-zinc-800 shadow-xl py-1 z-40 text-xs font-mono">
-                    <div className="px-3 py-1 text-[10px] text-zinc-500 uppercase tracking-wider border-b border-zinc-800/60 font-sans">
+                  <div className="absolute right-0 mt-1.5 w-48 rounded-xl bg-slate-900 border border-slate-800 shadow-xl py-1 z-40 text-xs font-mono">
+                    <div className="px-3 py-1 text-[10px] text-slate-400 uppercase tracking-wider border-b border-slate-800/80 font-sans">
                       Pilih Domain
                     </div>
                     {domains.map((dom) => (
@@ -421,8 +419,8 @@ export default function HomePage() {
                           setDomainDropdownOpen(false);
                         }}
                         className={`w-full px-3 py-1.5 text-left flex items-center justify-between transition ${selectedDomain === dom
-                          ? "bg-blue-600/10 text-blue-400 font-semibold"
-                          : "text-zinc-300 hover:bg-zinc-800/60"
+                          ? "bg-blue-600/15 text-blue-400 font-semibold"
+                          : "text-slate-300 hover:bg-slate-800/60"
                           }`}
                       >
                         <span>@{dom}</span>
@@ -437,7 +435,7 @@ export default function HomePage() {
                 type="button"
                 onClick={() => handleCreateInbox(isCustomMode)}
                 disabled={generating || (isCustomMode && !customPrefix.trim())}
-                className="px-3.5 py-1.5 rounded-lg bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-medium flex items-center justify-center gap-1.5 transition disabled:opacity-50"
+                className="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition disabled:opacity-50 shadow-sm"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 {generating ? "..." : isCustomMode ? "Buat" : "Baru"}
@@ -450,29 +448,29 @@ export default function HomePage() {
       {/* Main Mailbox Workspace: Master-Detail Widescreen Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 min-h-[560px]">
         {/* Left Column: Inbox Message List (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col rounded-xl bg-zinc-900/30 border border-zinc-800 overflow-hidden">
-          <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/60">
+        <div className="lg:col-span-5 flex flex-col rounded-2xl bg-[#0f172a] border border-slate-800/90 shadow-lg overflow-hidden">
+          <div className="px-4 py-3.5 border-b border-slate-800 bg-[#090d16]/70 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <InboxIcon className="h-4 w-4 text-zinc-400" />
-              <h2 className="text-xs font-semibold text-zinc-200 uppercase tracking-wider">Kotak Masuk</h2>
-              <span className="text-[11px] px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300 font-mono">
+              <img src="/brand/ocmail-icon-color.svg" alt="" className="h-4 w-4" />
+              <h2 className="text-xs font-semibold text-slate-200 uppercase tracking-wider font-sans">Kotak Masuk</h2>
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-blue-300 font-mono font-medium">
                 {messages.length}
               </span>
             </div>
-            <span className="text-[11px] text-zinc-500 font-mono">
+            <span className="text-[11px] text-slate-500 font-mono">
               {mounted && lastChecked ? `Cek: ${lastChecked}` : ""}
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto divide-y divide-zinc-800/60 max-h-[620px]">
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-800/60 max-h-[620px]">
             {messages.length === 0 ? (
-              <div className="p-12 text-center flex flex-col items-center justify-center h-full text-zinc-500 space-y-2.5">
-                <div className="p-3 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-500">
-                  <Mail className="h-5 w-5" />
+              <div className="p-12 text-center flex flex-col items-center justify-center h-full text-slate-500 space-y-3">
+                <div className="p-3.5 rounded-2xl bg-[#090d16] border border-slate-800 text-slate-500">
+                  <img src="/brand/ocmail-icon-color.svg" alt="" className="h-7 w-7 opacity-30 mx-auto" />
                 </div>
-                <div className="font-medium text-zinc-300 text-xs">Menunggu email masuk...</div>
-                <p className="text-[11px] text-zinc-500 max-w-xs leading-relaxed">
-                  Email yang dikirim ke alamat aktif akan langsung muncul di sini.
+                <div className="font-medium text-slate-300 text-xs">Menunggu email masuk...</div>
+                <p className="text-[11px] text-slate-500 max-w-xs leading-relaxed">
+                  Email yang dikirim ke alamat aktif akan langsung muncul di sini dalam 3 detik.
                 </p>
               </div>
             ) : (
@@ -482,29 +480,29 @@ export default function HomePage() {
                   <div
                     key={msg.id}
                     onClick={() => setSelectedMessage(msg)}
-                    className={`p-3.5 cursor-pointer transition flex flex-col gap-1 ${isSelected
-                      ? "bg-zinc-800/80 border-l-2 border-zinc-200"
-                      : "hover:bg-zinc-800/30"
+                    className={`p-4 cursor-pointer transition flex flex-col gap-1.5 ${isSelected
+                      ? "bg-blue-600/10 border-l-4 border-blue-500"
+                      : "hover:bg-slate-800/30"
                       }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-medium text-zinc-200 truncate">
+                      <span className="text-xs font-medium text-slate-200 truncate">
                         {msg.from}
                       </span>
-                      <span className="text-[10px] text-zinc-500 font-mono whitespace-nowrap">
+                      <span className="text-[10px] text-slate-500 font-mono whitespace-nowrap">
                         {mounted ? new Date(msg.received_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
                       </span>
                     </div>
 
-                    <div className="text-xs font-semibold text-zinc-100 truncate">
+                    <div className="text-xs font-semibold text-white truncate">
                       {msg.subject || "(Tanpa Subjek)"}
                     </div>
 
                     {/* Quick OTP badge on card if detected */}
                     {msg.otp && (
                       <div className="mt-1 flex items-center justify-between">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          <CheckCircle className="h-3 w-3" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/30">
+                          <CheckCircle className="h-3 w-3 text-blue-400" />
                           OTP: {msg.otp}
                         </span>
                         <button
@@ -512,7 +510,7 @@ export default function HomePage() {
                             e.stopPropagation();
                             copyOtp(msg.otp!);
                           }}
-                          className="text-[11px] text-zinc-400 hover:text-white transition"
+                          className="text-[11px] text-blue-400 hover:text-blue-300 font-medium transition"
                         >
                           Salin
                         </button>
@@ -526,28 +524,28 @@ export default function HomePage() {
         </div>
 
         {/* Right Column: Message Inspector (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col rounded-xl bg-zinc-900/30 border border-zinc-800 overflow-hidden">
+        <div className="lg:col-span-7 flex flex-col rounded-2xl bg-[#0f172a] border border-slate-800/90 shadow-lg overflow-hidden">
           {selectedMessage ? (
             <div className="flex flex-col h-full">
               {/* Message Header Bar */}
-              <div className="p-4 sm:p-5 border-b border-zinc-800 bg-zinc-950/60 space-y-3">
+              <div className="p-4 sm:p-5 border-b border-slate-800 bg-[#090d16]/70 space-y-3.5">
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-                  <div className="space-y-0.5">
-                    <h3 className="text-base font-semibold text-zinc-100 tracking-tight">
+                  <div className="space-y-1">
+                    <h3 className="text-base font-semibold text-white tracking-tight">
                       {selectedMessage.subject || "(Tanpa Subjek)"}
                     </h3>
-                    <div className="text-xs text-zinc-400">
-                      Dari: <span className="text-zinc-200">{selectedMessage.from}</span>
+                    <div className="text-xs text-slate-400">
+                      Dari: <span className="text-slate-200">{selectedMessage.from}</span>
                     </div>
-                    <div className="text-xs text-zinc-400">
-                      Ke: <span className="text-zinc-300 font-mono">{selectedMessage.to}</span>
+                    <div className="text-xs text-slate-400">
+                      Ke: <span className="text-slate-300 font-mono">{selectedMessage.to}</span>
                     </div>
                   </div>
 
                   <a
                     href={`/api/v1/inboxes/${encodeURIComponent(selectedMessage.to)}/messages/${selectedMessage.id}/raw`}
                     download={`${selectedMessage.id}.eml`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-300 transition border border-zinc-700/80"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition border border-slate-700/80 shadow-sm"
                   >
                     <Download className="h-3.5 w-3.5" />
                     Unduh .eml
@@ -556,16 +554,16 @@ export default function HomePage() {
 
                 {/* Big Prominent OTP Card Banner */}
                 {selectedMessage.otp && (
-                  <div className="p-3 rounded-lg bg-zinc-900 border border-emerald-500/30 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="h-8 w-8 rounded-md bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
-                        <CheckCircle className="h-4 w-4" />
+                  <div className="p-3.5 rounded-xl bg-gradient-to-r from-blue-950/60 to-slate-900 border border-blue-500/30 flex items-center justify-between gap-3 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                        <CheckCircle className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-[10px] uppercase font-mono font-medium text-emerald-400">
-                          Kode Verifikasi
+                        <div className="text-[10px] uppercase font-mono font-semibold text-blue-400 tracking-wider">
+                          Kode Verifikasi Terdeteksi
                         </div>
-                        <div className="text-xl font-mono font-semibold text-white tracking-wider select-all">
+                        <div className="text-2xl font-mono font-bold text-white tracking-widest select-all">
                           {selectedMessage.otp}
                         </div>
                       </div>
@@ -573,21 +571,21 @@ export default function HomePage() {
 
                     <button
                       onClick={() => copyOtp(selectedMessage.otp!)}
-                      className="px-3.5 py-1.5 rounded-md bg-zinc-100 hover:bg-white text-zinc-900 font-medium text-xs flex items-center gap-1.5 transition"
+                      className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs flex items-center gap-1.5 transition shadow-sm"
                     >
-                      {copiedOtp ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                      {copiedOtp ? "Disalin" : "Salin Kode"}
+                      {copiedOtp ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                      {copiedOtp ? "Disalin!" : "Salin Kode"}
                     </button>
                   </div>
                 )}
 
                 {/* View Tabs */}
-                <div className="flex items-center gap-1 pt-1 border-t border-zinc-800/80">
+                <div className="flex items-center gap-1.5 pt-1 border-t border-slate-800/80">
                   <button
                     onClick={() => setViewTab("preview")}
-                    className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition ${viewTab === "preview"
-                      ? "bg-zinc-800 text-white"
-                      : "text-zinc-400 hover:text-white"
+                    className={`px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition ${viewTab === "preview"
+                      ? "bg-slate-800 text-white shadow-sm"
+                      : "text-slate-400 hover:text-white"
                       }`}
                   >
                     <Eye className="h-3.5 w-3.5" />
@@ -595,9 +593,9 @@ export default function HomePage() {
                   </button>
                   <button
                     onClick={() => setViewTab("raw")}
-                    className={`px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1.5 transition ${viewTab === "raw"
-                      ? "bg-zinc-800 text-white"
-                      : "text-zinc-400 hover:text-white"
+                    className={`px-3 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition ${viewTab === "raw"
+                      ? "bg-slate-800 text-white shadow-sm"
+                      : "text-slate-400 hover:text-white"
                       }`}
                   >
                     <FileText className="h-3.5 w-3.5" />
@@ -610,7 +608,7 @@ export default function HomePage() {
               <div className="flex-1 p-5 overflow-y-auto max-h-[500px]">
                 {viewTab === "preview" ? (
                   selectedMessage.html ? (
-                    <div className="rounded-lg overflow-hidden bg-white border border-zinc-800">
+                    <div className="rounded-xl overflow-hidden bg-white border border-slate-800 shadow-sm">
                       <iframe
                         srcDoc={selectedMessage.html}
                         title="Email Preview"
@@ -619,21 +617,21 @@ export default function HomePage() {
                       />
                     </div>
                   ) : (
-                    <div className="text-zinc-300 text-xs whitespace-pre-wrap leading-relaxed font-sans">
+                    <div className="text-slate-200 text-xs whitespace-pre-wrap leading-relaxed font-sans">
                       {selectedMessage.text || selectedMessage.body}
                     </div>
                   )
                 ) : (
-                  <pre className="p-3.5 rounded-lg bg-zinc-950 border border-zinc-800/80 text-xs font-mono text-zinc-400 overflow-x-auto whitespace-pre-wrap">
+                  <pre className="p-4 rounded-xl bg-[#090d16] border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap">
                     {selectedMessage.body}
                   </pre>
                 )}
               </div>
             </div>
           ) : (
-            <div className="p-12 text-center flex flex-col items-center justify-center h-full text-zinc-500 space-y-2">
-              <Mail className="h-8 w-8 text-zinc-700" />
-              <div className="text-xs font-medium text-zinc-400">Pilih pesan di samping untuk membaca</div>
+            <div className="p-12 text-center flex flex-col items-center justify-center h-full text-slate-500 space-y-3">
+              <img src="/brand/ocmail-icon-color.svg" alt="" className="h-10 w-10 opacity-20 mx-auto" />
+              <div className="text-xs font-medium text-slate-400">Pilih pesan di samping untuk membaca</div>
             </div>
           )}
         </div>
