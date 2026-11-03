@@ -8,6 +8,7 @@ interface AdminStats {
   totalUsers: number;
   totalInboxes: number;
   totalKeys: number;
+  totalMessages: number;
   totalApiRequests: number;
 }
 
@@ -168,7 +169,7 @@ export default function AdminPage() {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="p-5 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md">
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs uppercase font-medium">Total Users</span>
@@ -191,6 +192,16 @@ export default function AdminPage() {
 
         <div className="p-5 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md">
           <div className="flex items-center justify-between text-slate-400 mb-2">
+            <span className="text-xs uppercase font-medium">Pesan Masuk</span>
+            <Mail className="h-4 w-4 text-emerald-400" />
+          </div>
+          <div className="text-2xl font-bold text-emerald-400 font-mono">
+            {stats?.totalMessages.toLocaleString() ?? 0}
+          </div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md">
+          <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs uppercase font-medium">Active API Keys</span>
             <Key className="h-4 w-4 text-amber-400" />
           </div>
@@ -201,8 +212,8 @@ export default function AdminPage() {
 
         <div className="p-5 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-md">
           <div className="flex items-center justify-between text-slate-400 mb-2">
-            <span className="text-xs uppercase font-medium">API Requests Handled</span>
-            <Activity className="h-4 w-4 text-emerald-400" />
+            <span className="text-xs uppercase font-medium">API Requests</span>
+            <Activity className="h-4 w-4 text-blue-400" />
           </div>
           <div className="text-2xl font-bold text-blue-400 font-mono">
             {stats?.totalApiRequests.toLocaleString() ?? 0}

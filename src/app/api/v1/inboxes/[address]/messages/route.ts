@@ -31,6 +31,30 @@ export async function GET(
     }
 
     const messages = await getWorkerMessages(cleanAddr);
+
+    // Track every received message (deduplicated by unique messageId)
+    const dbClient = prisma as unknown as {
+      messageLog?: {
+        upsert: (args: unknown) => Promise<unknown>;
+      };
+    };
+
+    for (const msg of messages) {
+      if (msg.id && dbClient.messageLog) {
+        dbClient.messageLog
+          .upsert({
+            where: { messageId: msg.id },
+            update: {},
+            create: {
+              messageId: msg.id,
+              inboxAddr: cleanAddr,
+              hasOtp: Boolean(msg.otp),
+            },
+          })
+          .catch(() => {});
+      }
+    }
+
     return NextResponse.json(messages, {
       headers: {
         "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",

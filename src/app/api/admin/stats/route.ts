@@ -11,13 +11,18 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const [totalUsers, totalInboxes, totalKeys, aggregateRequests, recentUsers] = await Promise.all([
+    const dbClient = prisma as unknown as {
+      messageLog?: { count: () => Promise<number> };
+    };
+
+    const [totalUsers, totalInboxes, totalKeys, aggregateRequests, totalMessages, recentUsers] = await Promise.all([
       prisma.user.count(),
       prisma.inbox.count(),
       prisma.apiKey.count(),
       prisma.apiKey.aggregate({
         _sum: { requestsCount: true },
       }),
+      dbClient.messageLog?.count().catch(() => 0) ?? 0,
       prisma.user.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
@@ -36,6 +41,7 @@ export async function GET(req: NextRequest) {
         totalUsers,
         totalInboxes,
         totalKeys,
+        totalMessages: totalMessages || 0,
         totalApiRequests: aggregateRequests._sum.requestsCount || 0,
       },
       recentUsers,
