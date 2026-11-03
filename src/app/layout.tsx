@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ocmail — Disposable Email Platform",
   description:
-    "Platform disposable email / tempmail modern, berkinerja tinggi, dan dirancang untuk kebutuhan komunitas serta automasi skrip/bot.",
+    "Platform disposable email / tempmail dirancang untuk kebutuhan automasi skrip/bot dengan OTP extractor & API key automation.",
   icons: {
     icon: [
       { url: "/brand/ocmail-icon-color.svg", type: "image/svg+xml" },
@@ -49,7 +49,7 @@ export default function RootLayout({
               <span className="font-medium text-slate-400">ocmail</span>
             </div>
             <p className="text-[11px] text-slate-500">
-              Disposable Email Platform for Communities & Automation &copy; {new Date().getFullYear()}
+              Disposable Email Platform for Automation &copy; {new Date().getFullYear()}
             </p>
           </footer>
         </Providers>
