@@ -26,6 +26,29 @@ export default {
     const existing = (await env.EMAILS.get(to, { type: "json" })) || [];
     existing.unshift(emailData); // newest first
     await env.EMAILS.put(to, JSON.stringify(existing), { expirationTtl: 86400 });
+
+    // Notify Next.js backend asynchronously via waitUntil so stats increment immediately
+    if (env.APP_URL) {
+      const webhookUrl = `${env.APP_URL.replace(/\/$/, "")}/api/webhooks/email-received`;
+      const hasOtp = /(?:code|verification|otp|kode|security|confirmation|pin)[^0-9]{0,25}(\b\d{3}[-\s]?\d{3}\b|\b\d{4,8}\b)/i.test(
+        `${subject} ${rawBody.slice(0, 4000)}`
+      );
+
+      ctx.waitUntil(
+        fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(env.WORKER_WEBHOOK_SECRET ? { "x-worker-secret": env.WORKER_WEBHOOK_SECRET } : {}),
+          },
+          body: JSON.stringify({
+            id: emailId,
+            to,
+            hasOtp,
+          }),
+        }).catch(() => {})
+      );
+    }
   },
 
   // 2. HTTP API for Next.js backend & clients
