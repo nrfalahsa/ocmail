@@ -1,13 +1,14 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 
 export default function SignInPage() {
   return (
     <div className="min-h-[75vh] flex items-center justify-center p-4">
       <div className="w-full max-w-sm p-8 rounded-2xl bg-[#0f172a] border border-slate-800 shadow-2xl space-y-6">
         <div className="text-center space-y-3">
-          <img src="/brand/ocmail-icon-color.svg" alt="ocmail logo" className="h-12 w-12 mx-auto" />
+          <Image src="/brand/ocmail-icon-color.svg" alt="ocmail logo" width={48} height={48} className="h-12 w-12 mx-auto" priority />
           <h1 className="text-xl font-bold tracking-tight text-white font-sans">Masuk ke ocmail</h1>
         </div>
 

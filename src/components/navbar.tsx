@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Mail, Key, ShieldCheck, LogIn, LogOut, User as UserIcon, ChevronDown } from "lucide-react";
 import NextLink from "next/link";
+import Image from "next/image";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -37,7 +38,7 @@ export function Navbar() {
       <div className="max-w-[1500px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <NextLink href="/" className="flex items-center gap-2.5 font-bold text-base tracking-tight text-white hover:opacity-90 transition">
-            <img src="/brand/ocmail-icon-color.svg" alt="ocmail" className="h-7 w-7" />
+            <Image src="/brand/ocmail-icon-color.svg" alt="ocmail" width={28} height={28} className="h-7 w-7" priority />
             <span className="font-bold tracking-tight text-white text-base">ocmail</span>
           </NextLink>
 
@@ -104,10 +105,11 @@ export function Navbar() {
                 className="flex items-center gap-2 text-xs text-zinc-300 bg-zinc-900 hover:bg-zinc-800/80 px-3 py-1.5 rounded-lg border border-zinc-800 transition"
               >
                 {session.user.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={session.user.image}
                     alt={session.user.name || "User"}
-                    className="h-5 w-5 rounded-full"
+                    className="h-5 w-5 rounded-full object-cover"
                   />
                 ) : (
                   <UserIcon className="h-4 w-4 text-zinc-400" />

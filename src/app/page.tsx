@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import {
   Copy,
   Check,
@@ -323,7 +324,7 @@ export default function HomePage() {
                 onClick={copyAddress}
                 className="cursor-pointer group flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#090d16] border border-slate-800 hover:border-blue-500/60 transition shadow-inner"
               >
-                <img src="/brand/ocmail-icon-color.svg" alt="" className="h-4 w-4" />
+                <Image src="/brand/ocmail-icon-color.svg" alt="" width={16} height={16} className="h-4 w-4" />
                 <span className="font-mono text-base font-semibold text-white select-all">
                   {activeAddress || "Membuat inbox..."}
                 </span>
@@ -451,7 +452,7 @@ export default function HomePage() {
         <div className="lg:col-span-5 flex flex-col rounded-2xl bg-[#0f172a] border border-slate-800/90 shadow-lg overflow-hidden">
           <div className="px-4 py-3.5 border-b border-slate-800 bg-[#090d16]/70 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <img src="/brand/ocmail-icon-color.svg" alt="" className="h-4 w-4" />
+              <Image src="/brand/ocmail-icon-color.svg" alt="" width={16} height={16} className="h-4 w-4" />
               <h2 className="text-xs font-semibold text-slate-200 uppercase tracking-wider font-sans">Kotak Masuk</h2>
               <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-blue-300 font-mono font-medium">
                 {messages.length}
@@ -466,7 +467,7 @@ export default function HomePage() {
             {messages.length === 0 ? (
               <div className="p-12 text-center flex flex-col items-center justify-center h-full text-slate-500 space-y-3">
                 <div className="p-3.5 rounded-2xl bg-[#090d16] border border-slate-800 text-slate-500">
-                  <img src="/brand/ocmail-icon-color.svg" alt="" className="h-7 w-7 opacity-30 mx-auto" />
+                  <Image src="/brand/ocmail-icon-color.svg" alt="" width={28} height={28} className="h-7 w-7 opacity-30 mx-auto" />
                 </div>
                 <div className="font-medium text-slate-300 text-xs">Menunggu email masuk...</div>
                 <p className="text-[11px] text-slate-500 max-w-xs leading-relaxed">
@@ -630,7 +631,7 @@ export default function HomePage() {
             </div>
           ) : (
             <div className="p-12 text-center flex flex-col items-center justify-center h-full text-slate-500 space-y-3">
-              <img src="/brand/ocmail-icon-color.svg" alt="" className="h-10 w-10 opacity-20 mx-auto" />
+              <Image src="/brand/ocmail-icon-color.svg" alt="" width={40} height={40} className="h-10 w-10 opacity-20 mx-auto" />
               <div className="text-xs font-medium text-slate-400">Pilih pesan di samping untuk membaca</div>
             </div>
           )}

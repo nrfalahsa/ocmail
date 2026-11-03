@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/navbar";
@@ -45,11 +46,11 @@ export default function RootLayout({
           </main>
           <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
             <div className="flex items-center justify-center gap-2 mb-1">
-              <img src="/brand/ocmail-icon-color.svg" alt="ocmail" className="h-4 w-4 opacity-70" />
+              <Image src="/brand/ocmail-icon-color.svg" alt="ocmail" width={16} height={16} className="h-4 w-4 opacity-70" />
               <span className="font-medium text-slate-400">ocmail</span>
             </div>
             <p className="text-[11px] text-slate-500">
-              Disposable Email Platform for Automation &copy; {new Date().getFullYear()}
+              Disposable Email Platform for Communities & Automation &copy; {new Date().getFullYear()}
             </p>
           </footer>
         </Providers>
