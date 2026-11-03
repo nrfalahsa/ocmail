@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { Key, Plus, Trash2, Copy, Check, Terminal, ShieldAlert } from "lucide-react";
+import { Key, Plus, Trash2, Copy, Check, Terminal, ShieldAlert, AlertCircle, X } from "lucide-react";
 
 interface ApiKeyItem {
   id: string;
@@ -22,6 +22,9 @@ export default function ApiKeysPage() {
   const [generatedRawKey, setGeneratedRawKey] = useState<string | null>(null);
   const [copiedKey, setCopiedKey] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
+  const [revokeTarget, setRevokeTarget] = useState<ApiKeyItem | null>(null);
+  const [revoking, setRevoking] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   function copySnippet(id: string, text: string) {
     navigator.clipboard.writeText(text);
@@ -83,6 +86,7 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
     e.preventDefault();
     if (!newKeyName.trim()) return;
     setCreating(true);
+    setErrorMessage(null);
 
     try {
       const res = await fetch("/api/v1/keys", {
@@ -95,25 +99,34 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
         setGeneratedRawKey(data.rawKey);
         setNewKeyName("");
         loadKeys();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setErrorMessage(err.error || "Gagal membuat API Key baru.");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setErrorMessage("Terjadi kesalahan jaringan saat membuat API Key.");
     } finally {
       setCreating(false);
     }
   }
 
-  async function handleRevokeKey(id: string) {
-    if (!confirm("Apakah Anda yakin ingin mencabut API Key ini? Tindakan ini tidak dapat dibatalkan.")) {
-      return;
-    }
+  async function confirmRevokeKey() {
+    if (!revokeTarget) return;
+    setRevoking(true);
+    setErrorMessage(null);
     try {
-      const res = await fetch(`/api/v1/keys?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/v1/keys?id=${revokeTarget.id}`, { method: "DELETE" });
       if (res.ok) {
-        setKeys((prev) => prev.filter((k) => k.id !== id));
+        setKeys((prev) => prev.filter((k) => k.id !== revokeTarget.id));
+        setRevokeTarget(null);
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setErrorMessage(err.error || "Gagal mencabut API Key.");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setErrorMessage("Terjadi kesalahan jaringan saat mencabut API Key.");
+    } finally {
+      setRevoking(false);
     }
   }
 
@@ -126,7 +139,7 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
   if (status === "loading" || loading) {
     return (
       <div className="py-20 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
       </div>
     );
   }
@@ -165,6 +178,22 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
           </p>
         </div>
       </div>
+
+      {/* Inline Error Alert */}
+      {errorMessage && (
+        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/30 flex items-start justify-between gap-3 animate-in fade-in">
+          <div className="flex items-start gap-2.5">
+            <AlertCircle className="h-4 w-4 text-red-400 mt-0.5 shrink-0" />
+            <div className="text-xs text-red-200">{errorMessage}</div>
+          </div>
+          <button
+            onClick={() => setErrorMessage(null)}
+            className="p-1 rounded text-red-400 hover:text-red-300 transition"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
       {/* Generated Token Alert */}
       {generatedRawKey && (
@@ -256,7 +285,7 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <button
-                        onClick={() => handleRevokeKey(k.id)}
+                        onClick={() => setRevokeTarget(k)}
                         className="p-1.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-zinc-800 transition"
                         title="Cabut API Key"
                       >
@@ -391,9 +420,9 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
                 </tr>
                 <tr>
                   <td className="py-2.5 px-3 font-mono text-red-400 font-semibold">401 Unauthorized</td>
-                  <td className="py-2.5 px-3 text-zinc-400">API Key salah atau tidak ada</td>
+                  <td className="py-2.5 px-3 text-zinc-400">API Key salah, dummy, atau tidak ada</td>
                   <td className="py-2.5 px-3 font-mono text-[11px] text-zinc-400">
-                    {`{"error": "Unauthorized"}`}
+                    {`{"error": "API Key tidak valid atau tidak terdaftar."}`}
                   </td>
                 </tr>
                 <tr>
@@ -415,6 +444,48 @@ curl -X DELETE https://ocmail.oneclash.xyz/api/v1/inboxes/mybot@oneclash.biz.id 
           </div>
         </div>
       </div>
+
+      {/* Custom Confirmation Modal for Revoking Key */}
+      {revokeTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-sm rounded-2xl bg-zinc-900 border border-zinc-800 shadow-2xl p-5 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center shrink-0">
+                <Trash2 className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white">Cabut API Key</h3>
+                <p className="text-[11px] text-zinc-400">Tindakan ini tidak dapat dibatalkan.</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-zinc-300 leading-relaxed">
+              Apakah Anda yakin ingin mencabut API Key{" "}
+              <strong className="text-white">&quot;{revokeTarget.name}&quot;</strong> ({revokeTarget.keyPrefix})?
+              Semua skrip atau bot yang menggunakan token ini akan langsung kehilangan akses.
+            </p>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setRevokeTarget(null)}
+                disabled={revoking}
+                className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium transition"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={confirmRevokeKey}
+                disabled={revoking}
+                className="px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-medium transition disabled:opacity-50"
+              >
+                {revoking ? "Mencabut..." : "Cabut Sekarang"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
