@@ -172,6 +172,7 @@ export default function HomePage() {
     } else {
       handleCreateInbox(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Poll messages when activeAddress changes
@@ -188,6 +189,7 @@ export default function HomePage() {
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeAddress]);
 
   async function handleCreateInbox(useCustom = isCustomMode) {

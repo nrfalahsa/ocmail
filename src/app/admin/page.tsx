@@ -45,6 +45,7 @@ export default function AdminPage() {
     } else if (status !== "loading") {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin, status]);
 
   async function loadData() {
