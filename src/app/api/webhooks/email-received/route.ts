@@ -2,6 +2,12 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Redis } from "@upstash/redis";
+
+let redis: Redis | null = null;
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  redis = Redis.fromEnv();
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,6 +17,29 @@ export async function POST(req: NextRequest) {
       const auth = req.headers.get("x-worker-secret") || req.headers.get("authorization");
       if (auth !== workerSecret && auth !== `Bearer ${workerSecret}`) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      // Replay protection (only when Redis available)
+      if (redis) {
+        const timestamp = req.headers.get("x-webhook-timestamp");
+        const nonce = req.headers.get("x-webhook-nonce");
+
+        // Check timestamp (5 min window)
+        if (timestamp) {
+          const age = Math.abs(Date.now() - parseInt(timestamp, 10));
+          if (age > 300000) {
+            return NextResponse.json({ error: "Expired timestamp" }, { status: 401 });
+          }
+        }
+
+        // Check nonce (prevent replay)
+        if (nonce) {
+          const used = await redis.get(`webhook:nonce:${nonce}`);
+          if (used) {
+            return NextResponse.json({ error: "Replay detected" }, { status: 401 });
+          }
+          await redis.setex(`webhook:nonce:${nonce}`, 600, "1");
+        }
       }
     }
 
@@ -63,7 +92,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (err) {
-    console.error("Email webhook error:", err);
-    return NextResponse.json({ error: "Internal error", details: String(err) }, { status: 500 });
+    console.error("[Webhook Error]", err);
+    const isDev = process.env.NODE_ENV === "development";
+    return NextResponse.json(
+      { 
+        error: "Internal error",
+        ...(isDev && { details: String(err) })
+      },
+      { status: 500 }
+    );
   }
 }

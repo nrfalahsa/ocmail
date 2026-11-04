@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/api-guard";
 import { generateApiKey } from "@/lib/api-key";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/ratelimit";
 
 export async function GET(req: NextRequest) {
   const authCtx = await authenticateRequest(req);
@@ -26,7 +27,15 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json({ keys });
   } catch (err) {
-    return NextResponse.json({ error: "Database error", details: String(err) }, { status: 500 });
+    console.error("[API Error - Keys GET]", err);
+    const isDev = process.env.NODE_ENV === "development";
+    return NextResponse.json(
+      { 
+        error: "Database error",
+        ...(isDev && { details: String(err) })
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -34,6 +43,11 @@ export async function POST(req: NextRequest) {
   const authCtx = await authenticateRequest(req);
   if (!authCtx.userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { success } = await checkRateLimit(`key_create:${authCtx.userId}`);
+  if (!success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Try again later." }, { status: 429 });
   }
 
   const body = await req.json().catch(() => ({}));
@@ -62,7 +76,15 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (err) {
-    return NextResponse.json({ error: "Failed to create API key", details: String(err) }, { status: 500 });
+    console.error("[API Error - Keys POST]", err);
+    const isDev = process.env.NODE_ENV === "development";
+    return NextResponse.json(
+      { 
+        error: "Failed to create API key",
+        ...(isDev && { details: String(err) })
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -84,6 +106,14 @@ export async function DELETE(req: NextRequest) {
     });
     return new NextResponse(null, { status: 204 });
   } catch (err) {
-    return NextResponse.json({ error: "Failed to revoke key", details: String(err) }, { status: 500 });
+    console.error("[API Error - Keys DELETE]", err);
+    const isDev = process.env.NODE_ENV === "development";
+    return NextResponse.json(
+      { 
+        error: "Failed to revoke key",
+        ...(isDev && { details: String(err) })
+      },
+      { status: 500 }
+    );
   }
 }

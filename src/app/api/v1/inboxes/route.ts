@@ -5,6 +5,7 @@ import { authenticateRequest } from "@/lib/api-guard";
 import { createWorkerInbox } from "@/lib/cf-client";
 import { prisma } from "@/lib/prisma";
 import { getBlockedKeywords } from "@/app/api/admin/blocked-keywords/route";
+import { checkRateLimit } from "@/lib/ratelimit";
 
 export async function GET(req: NextRequest) {
   const authCtx = await authenticateRequest(req);
@@ -22,11 +23,25 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json({ inboxes });
   } catch (err) {
-    return NextResponse.json({ error: "Database error", details: String(err) }, { status: 500 });
+    console.error("[API Error - Inboxes GET]", err);
+    const isDev = process.env.NODE_ENV === "development";
+    return NextResponse.json(
+      { 
+        error: "Database error",
+        ...(isDev && { details: String(err) })
+      },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "127.0.0.1";
+  const { success } = await checkRateLimit(`inbox_create:${ip}`);
+  if (!success) {
+    return NextResponse.json({ error: "Rate limit exceeded. Try again later." }, { status: 429 });
+  }
+
   const authCtx = await authenticateRequest(req);
   if (authCtx.isInvalidKey) {
     return NextResponse.json({ error: "API Key tidak valid atau tidak terdaftar." }, { status: 401 });
@@ -108,6 +123,14 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (err) {
-    return NextResponse.json({ error: "Failed to create inbox", details: String(err) }, { status: 500 });
+    console.error("[API Error - Inboxes POST]", err);
+    const isDev = process.env.NODE_ENV === "development";
+    return NextResponse.json(
+      { 
+        error: "Failed to create inbox",
+        ...(isDev && { details: String(err) })
+      },
+      { status: 500 }
+    );
   }
 }

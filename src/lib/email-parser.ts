@@ -3,6 +3,8 @@
  * Parses raw .eml into headers, clean text, and rendered HTML
  */
 
+import sanitizeHtml from "sanitize-html";
+
 function decodeQuotedPrintable(str: string): string {
   // Replace soft line breaks
   let cleaned = str.replace(/=\r?\n/g, "");
@@ -112,7 +114,7 @@ export function parseRawEmail(rawBody: string): ParsedEmail {
     }
 
     if (foundHtml) {
-      return { from: parsedFrom, subject: parsedSubject, html: sanitizeHtml(foundHtml), text: foundText || stripTags(foundHtml), isHtml: true };
+      return { from: parsedFrom, subject: parsedSubject, html: sanitizeHtmlContent(foundHtml), text: foundText || stripTags(foundHtml), isHtml: true };
     }
     if (foundText) {
       return { from: parsedFrom, subject: parsedSubject, html: "", text: foundText, isHtml: false };
@@ -132,19 +134,25 @@ export function parseRawEmail(rawBody: string): ParsedEmail {
   return {
     from: parsedFrom,
     subject: parsedSubject,
-    html: isHtml ? sanitizeHtml(decodedBody) : "",
+    html: isHtml ? sanitizeHtmlContent(decodedBody) : "",
     text: isHtml ? stripTags(decodedBody) : decodedBody,
     isHtml,
   };
 }
 
-function sanitizeHtml(html: string): string {
-  // Strip harmful script tags and on* attributes
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
-    .replace(/\son\w+="[^"]*"/gi, "")
-    .replace(/\son\w+='[^']*'/gi, "");
+function sanitizeHtmlContent(html: string): string {
+  return sanitizeHtml(html, {
+    allowedTags: ['p', 'br', 'b', 'i', 'u', 'a', 'img', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'strong', 'em', 'hr'],
+    allowedAttributes: {
+      a: ['href', 'title'],
+      img: ['src', 'alt', 'title', 'width', 'height'],
+      '*': ['class', 'style']
+    },
+    allowedSchemes: ['http', 'https', 'mailto'],
+    allowedSchemesByTag: {
+      img: ['http', 'https', 'data']
+    }
+  });
 }
 
 function stripTags(html: string): string {
