@@ -5,7 +5,7 @@
 ### PostCSS Dependency Vulnerabilities (Accepted Risk)
 
 **Status:** ACCEPTED - LOW RISK  
-**Date:** 2024-11-04  
+**Date:** 2026-11-04  
 **CVEs:** GHSA-6g55-p6wh-862q, GHSA-r28c-9q8g-f849, GHSA-qx2v-qp2m-jg93, GHSA-fxqj-rqcc-2cmp
 
 **Affected Package:** `postcss` <=8.5.22 (transitive dependency from `next@15.5.28` and `next-auth@5.0.0-beta.32`)
@@ -22,7 +22,7 @@
 - No runtime CSS processing
 - Regular dependency audits scheduled
 
-**Revalidation:** Check after Next.js 15.6.x release or quarterly review (2025-02-01)
+**Revalidation:** Check after Next.js 15.6.x release or quarterly review (2027-02-01)
 
 ---
 
@@ -39,5 +39,5 @@ All P1-P3 security issues from audit resolved:
 - ✅ IDOR protection (ownership validation)
 - ✅ Admin endpoint protection (role checks)
 
-**Last Full Audit:** 2024-11-04  
-**Next Scheduled Audit:** 2025-02-01
+**Last Full Audit:** 2026-11-04  
+**Next Scheduled Audit:** 2027-02-01
