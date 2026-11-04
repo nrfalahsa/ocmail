@@ -241,7 +241,7 @@ export default function HomePage() {
         if (selectedMessage) {
           const found = list.find((m) => m.id === selectedMessage.id);
           if (found) setSelectedMessage(found);
-        } else if (list.length > 0) {
+        } else if (list.length > 0 && !isSilent) {
           setSelectedMessage(list[0]);
         }
       } else if (res.status === 403) {

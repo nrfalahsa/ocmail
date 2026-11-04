@@ -4,7 +4,7 @@
  */
 
 const KEYWORD_OTP_RE = /(?:code|verification|otp|kode|security|confirmation|pin)[^0-9]{0,25}(\b\d{3}[-\s]?\d{3}\b|\b\d{4,8}\b)/i;
-const STANDALONE_OTP_RE = /(?<![#\w&])(\d{3}[-\s]?\d{3}|\d{4,8})(?![#\w&])/;
+const STANDALONE_OTP_RE = /(?<![#\w&])(\d{3}[-\s]?\d{3}|\d{6,8})(?![#\w&])/;
 
 export function extractOtp(subject = "", body = ""): string {
   const safeSubject = subject || "";

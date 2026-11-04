@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
           expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         },
       })
-      .catch(() => {});
+      .catch((err) => console.error("[Webhook] Inbox upsert failed:", err));
 
     // 2. Log message to MessageLog so Total Messages increments immediately
     const dbClient = prisma as unknown as {

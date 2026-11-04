@@ -44,3 +44,5 @@ next-env.d.ts
 
 # cloudflare config
 wrangler.toml
+*.eml
+swappy-*.png
