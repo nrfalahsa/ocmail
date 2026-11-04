@@ -28,10 +28,10 @@
 
 ## Fixed Vulnerabilities
 
-All P1-P3 security issues from audit resolved:
+All P1-P2 security issues from audit resolved:
 
 - ✅ XSS via email HTML (sanitize-html library)
-- ✅ Iframe sandbox hardening (no popups)
+- ⚠️ Iframe sandbox (allows popups for verification links - trade-off for UX)
 - ✅ Rate limiting (10 req/min via Upstash Redis)
 - ✅ Security headers (CSP, X-Frame-Options, etc)
 - ✅ Error message sanitization (production)

@@ -14,7 +14,7 @@ Conducted comprehensive security audit covering authentication, authorization, i
 **Risk Level:** LOW  
 **Critical Issues:** 0  
 **High Issues:** 0 (PostCSS accepted - low actual risk, build-time only)  
-**Medium Issues:** 1 (Rate limiting IP rotation bypass - acceptable for hobby tier)  
+**Medium Issues:** 2 (Rate limiting IP rotation bypass, iframe popup phishing risk - both acceptable)  
 **Low Issues:** 0
 
 ---
@@ -82,26 +82,31 @@ const identifier = `inbox_create:${ip}:${fingerprint}`;
 
 ---
 
-### ✅ P3: Dangerous Iframe Sandbox - SECURE
+### ✅ P3: Dangerous Iframe Sandbox - SECURE WITH TRADE-OFF
 
-**Severity:** Critical (Mitigated)  
-**Status:** ✅ FIXED
+**Severity:** Critical (Partially Mitigated)  
+**Status:** ⚠️ POPUPS ALLOWED FOR UX
 
 **Location:** `src/app/page.tsx:627`
 
 **Finding:**
-Iframe restricted with `sandbox=""` (no allow-* flags):
+Iframe sandbox allows popups for verification link functionality:
 ```tsx
-<iframe sandbox="" src={iframeUrl} />
+<iframe sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox" src={iframeUrl} />
 ```
 
 **Security guarantees:**
-- Scripts disabled
-- Popups blocked
+- Scripts disabled (no allow-scripts)
 - Form submission disabled
-- Top-level navigation blocked
+- Top-level navigation blocked (only popups allowed)
+- sanitize-html strips all `<script>` tags and event handlers
 
-**Recommendation:** ✅ No action needed.
+**Trade-off:**
+- ✅ Verification links work (magic links, OAuth, email confirmations)
+- ⚠️ Popup phishing risk: malicious emails can open popup windows
+- Mitigation: Content sanitized before rendering, no JS execution in iframe
+
+**Recommendation:** ⚠️ Acceptable trade-off for UX. Consider implementing link extraction UI in future for better security.
 
 ---
 
@@ -391,7 +396,7 @@ DNS managed by Cloudflare. Verify `oneclash.xyz` and `oneclash.biz.id` CNAME rec
 |---------|----------|--------|----------------|
 | P1: XSS | Critical | ✅ Secure | None |
 | P2: Rate Limiting | Medium | ⚠️ Limited | Optional: Add fingerprinting |
-| P3: Iframe Sandbox | Critical | ✅ Secure | None |
+| P3: Iframe Sandbox | Critical | ⚠️ Trade-off | Popups allowed for verification links |
 | P4: IDOR | High | ✅ Secure | None |
 | P5: Auth/Authz | High | ✅ Secure | None |
 | P6: Admin Protection | High | ✅ Secure | None |
