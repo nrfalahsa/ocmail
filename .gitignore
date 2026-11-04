@@ -46,3 +46,6 @@ next-env.d.ts
 wrangler.toml
 *.eml
 swappy-*.png
+ocmail-log-export-*.json
+SECURITY_AUDIT_PROMPT.md
+SECURITY_FIX_POSTCSS.md
