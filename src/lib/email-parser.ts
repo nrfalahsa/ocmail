@@ -142,15 +142,39 @@ export function parseRawEmail(rawBody: string): ParsedEmail {
 
 function sanitizeHtmlContent(html: string): string {
   return sanitizeHtml(html, {
-    allowedTags: ['p', 'br', 'b', 'i', 'u', 'a', 'img', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'strong', 'em', 'hr'],
+    allowedTags: ['p', 'br', 'b', 'i', 'u', 'a', 'img', 'table', 'tr', 'td', 'th', 'thead', 'tbody', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'strong', 'em', 'hr', 'svg', 'path', 'circle', 'rect', 'line', 'polygon', 'polyline', 'g'],
     allowedAttributes: {
-      a: ['href', 'title'],
-      img: ['src', 'alt', 'title', 'width', 'height'],
-      '*': ['class', 'style']
+      a: ['href', 'title', 'target', 'rel'],
+      img: ['src', 'alt', 'title', 'width', 'height', 'border', 'align', 'valign', 'hspace', 'vspace'],
+      table: ['width', 'border', 'cellpadding', 'cellspacing', 'align', 'bgcolor'],
+      td: ['width', 'height', 'align', 'valign', 'bgcolor', 'colspan', 'rowspan'],
+      th: ['width', 'height', 'align', 'valign', 'bgcolor', 'colspan', 'rowspan'],
+      svg: ['width', 'height', 'viewBox', 'xmlns', 'fill', 'stroke'],
+      path: ['d', 'fill', 'stroke', 'stroke-width'],
+      circle: ['cx', 'cy', 'r', 'fill', 'stroke'],
+      rect: ['x', 'y', 'width', 'height', 'fill', 'stroke'],
+      '*': ['class', 'style', 'id']
     },
     allowedSchemes: ['http', 'https', 'mailto'],
     allowedSchemesByTag: {
-      img: ['http', 'https', 'data']
+      img: ['http', 'https', 'data', 'cid']
+    },
+    allowedStyles: {
+      '*': {
+        'color': [/^#(0x)?[0-9a-f]+$/i, /^rgb\(/],
+        'background': [/^#(0x)?[0-9a-f]+$/i, /^rgb\(/, /^url\(/],
+        'background-color': [/^#(0x)?[0-9a-f]+$/i, /^rgb\(/],
+        'background-image': [/^url\(/],
+        'text-align': [/^left$/, /^right$/, /^center$/],
+        'font-size': [/^\d+(?:px|em|%)$/],
+        'font-weight': [/^\w+$/],
+        'width': [/^\d+(?:px|%)?$/],
+        'height': [/^\d+(?:px|%)?$/],
+        'padding': [/^\d+(?:px|em)?$/],
+        'margin': [/^\d+(?:px|em)?$/],
+        'border': [/.*/],
+        'display': [/^block$/, /^inline$/, /^inline-block$/, /^none$/]
+      }
     }
   });
 }
