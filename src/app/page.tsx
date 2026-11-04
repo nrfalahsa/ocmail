@@ -624,7 +624,7 @@ export default function HomePage() {
                       <iframe
                         srcDoc={selectedMessage.html}
                         title="Email Preview"
-                        sandbox="allow-same-origin"
+                        sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
                         className="w-full min-h-[460px] border-0"
                       />
                     </div>
