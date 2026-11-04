@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { ShieldCheck, Users, Mail, Key, Activity, Trash2, UserCog, Search, AlertTriangle, RefreshCw, Eye } from "lucide-react";
+import { ShieldCheck, Users, Mail, Key, Activity, Trash2, UserCog, Search, AlertTriangle, RefreshCw, Eye, X, CheckCircle } from "lucide-react";
 
 interface AdminStats {
   totalUsers: number;
@@ -49,6 +49,15 @@ export default function AdminPage() {
   }>>([]);
   const [inboxSearch, setInboxSearch] = useState("");
   const [loadingInboxes, setLoadingInboxes] = useState(false);
+  const [previewInbox, setPreviewInbox] = useState<string | null>(null);
+  const [previewMessages, setPreviewMessages] = useState<Array<{
+    id: string;
+    subject: string;
+    from: string;
+    received_at: number;
+    otp?: string;
+  }>>([]);
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
   const isAdmin = session?.user?.role === "ADMIN";
 
@@ -168,6 +177,22 @@ export default function AdminPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, isAdmin]);
+
+  async function openInboxPreview(address: string) {
+    setPreviewInbox(address);
+    setLoadingPreview(true);
+    try {
+      const res = await fetch(`/api/v1/inboxes/${encodeURIComponent(address)}/messages`);
+      if (res.ok) {
+        const msgs = await res.json();
+        setPreviewMessages(msgs);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingPreview(false);
+    }
+  }
 
   if (status === "loading" || loading) {
     return (
@@ -404,12 +429,10 @@ export default function AdminPage() {
           ) : (
             <div className="grid gap-3">
               {allInboxes.map((inbox) => (
-                <a
+                <button
                   key={inbox.id}
-                  href={`/?inbox=${encodeURIComponent(inbox.address)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition group"
+                  onClick={() => openInboxPreview(inbox.address)}
+                  className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition group text-left w-full"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
@@ -447,7 +470,7 @@ export default function AdminPage() {
                     </div>
                     <Eye className="h-4 w-4 text-zinc-600 group-hover:text-blue-400 transition shrink-0" />
                   </div>
-                </a>
+                </button>
               ))}
             </div>
           )}
@@ -543,6 +566,90 @@ export default function AdminPage() {
               >
                 {deletingUser ? "Menghapus..." : "Hapus Pengguna"}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Inbox Preview Modal */}
+      {previewInbox && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-5xl h-[85vh] rounded-2xl bg-zinc-900 border border-zinc-800 shadow-2xl flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+              <div>
+                <h3 className="text-sm font-semibold text-white">Preview Inbox</h3>
+                <p className="text-xs text-zinc-400 font-mono mt-0.5">{previewInbox}</p>
+              </div>
+              <button
+                onClick={() => setPreviewInbox(null)}
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-4">
+              {loadingPreview ? (
+                <div className="py-12 flex justify-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+                </div>
+              ) : previewMessages.length === 0 ? (
+                <div className="py-12 text-center">
+                  <Mail className="h-12 w-12 text-zinc-700 mx-auto mb-3" />
+                  <p className="text-sm text-zinc-500">Belum ada pesan masuk</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {previewMessages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className="p-3 rounded-xl bg-zinc-800/50 border border-zinc-700 hover:border-zinc-600 transition"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-white truncate">
+                            {msg.subject || "(No Subject)"}
+                          </div>
+                          <div className="text-xs text-zinc-500 mt-1 truncate">
+                            Dari: {msg.from}
+                          </div>
+                          {msg.otp && (
+                            <div className="mt-2 inline-flex items-center gap-2 px-2 py-1 rounded bg-blue-500/10 border border-blue-500/20">
+                              <CheckCircle className="h-3 w-3 text-blue-400" />
+                              <span className="text-xs font-mono text-blue-400">{msg.otp}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-zinc-600">
+                          {new Date(msg.received_at).toLocaleString("id-ID", {
+                            day: "2-digit",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-zinc-800">
+              <div className="flex items-center justify-between text-xs text-zinc-500">
+                <span>{previewMessages.length} pesan</span>
+                <a
+                  href={`/?inbox=${encodeURIComponent(previewInbox)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 transition"
+                >
+                  Buka di tab baru →
+                </a>
+              </div>
             </div>
           </div>
         </div>
