@@ -17,7 +17,9 @@ export async function GET(req: NextRequest) {
 
   try {
     const inboxes = await prisma.inbox.findMany({
-      where: authCtx.role === "ADMIN" ? {} : { userId: authCtx.userId },
+      // Toggle ADMIN cross-user inbox visibility:
+      // where: authCtx.role === "ADMIN" ? {} : { userId: authCtx.userId },  // ADMIN sees all
+      where: { userId: authCtx.userId },  // Everyone (including ADMIN) sees only own
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ inboxes });
