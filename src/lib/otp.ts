@@ -10,6 +10,11 @@ export function extractOtp(subject = "", body = ""): string {
   const safeSubject = subject || "";
   const safeBody = body || "";
 
+  // Skip OTP detection for magic link emails
+  if (/magic.*link|sign.*link|login.*link|verification.*link/i.test(safeSubject)) {
+    return "";
+  }
+
   // 1. Check subject with keyword pattern first
   const subjectKeywordMatch = safeSubject.match(KEYWORD_OTP_RE);
   if (subjectKeywordMatch && subjectKeywordMatch[1]) {
@@ -31,6 +36,11 @@ export function extractOtp(subject = "", body = ""): string {
     .replace(/<[^>]+>/g, " ")
     .replace(/#[0-9a-fA-F]{3,8}/g, " ") // strip hex colors
     .replace(/&\w+;/g, " "); // strip html entities
+
+  // Skip if body contains magic link indicators
+  if (/https?:\/\/[^\s]{50,}|clerk\.openrouter\.ai|verify\?.*token=/i.test(cleanedBody)) {
+    return "";
+  }
 
   // 4. Check body with keyword pattern
   const bodyKeywordMatch = cleanedBody.match(KEYWORD_OTP_RE);
