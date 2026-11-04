@@ -34,14 +34,5 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
-  },
-  "pnpm": {
-    "overrides": {
-      "postcss": "8.5.23"
-    }
-  },
-  "comments": {
-    "pnpm.overrides": "Broken in pnpm v12 - see SECURITY.md for PostCSS risk acceptance",
-    "postcss-devDep": "Explicit install to satisfy our code, but next/next-auth still bundle old version"
   }
 }
