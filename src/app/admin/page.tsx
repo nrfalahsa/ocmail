@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { ShieldCheck, Users, Mail, Key, Activity, Trash2, UserCog, Search, AlertTriangle } from "lucide-react";
+import { ShieldCheck, Users, Mail, Key, Activity, Trash2, UserCog, Search, AlertTriangle, RefreshCw, Eye } from "lucide-react";
 
 interface AdminStats {
   totalUsers: number;
@@ -30,12 +30,25 @@ export default function AdminPage() {
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState<"users" | "system">("users");
+  const [activeTab, setActiveTab] = useState<"users" | "inboxes" | "system">("users");
   const [blockedWordsInput, setBlockedWordsInput] = useState("");
   const [savingKeywords, setSavingKeywords] = useState(false);
   const [keywordStatus, setKeywordStatus] = useState<string | null>(null);
   const [deleteTargetUser, setDeleteTargetUser] = useState<UserItem | null>(null);
   const [deletingUser, setDeletingUser] = useState(false);
+  const [allInboxes, setAllInboxes] = useState<Array<{
+    id: string;
+    address: string;
+    prefix: string;
+    domain: string;
+    isCustom: boolean;
+    userId: string | null;
+    createdAt: string;
+    expiresAt: string | null;
+    user: { id: string; name: string | null; email: string | null } | null;
+  }>>([]);
+  const [inboxSearch, setInboxSearch] = useState("");
+  const [loadingInboxes, setLoadingInboxes] = useState(false);
 
   const isAdmin = session?.user?.role === "ADMIN";
 
@@ -133,6 +146,28 @@ export default function AdminPage() {
       setDeleteTargetUser(null);
     }
   }
+
+  async function loadAllInboxes() {
+    setLoadingInboxes(true);
+    try {
+      const res = await fetch(`/api/admin/all-inboxes?q=${encodeURIComponent(inboxSearch)}`);
+      if (res.ok) {
+        const d = await res.json();
+        setAllInboxes(d.inboxes || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingInboxes(false);
+    }
+  }
+
+  useEffect(() => {
+    if (isAdmin && activeTab === "inboxes") {
+      loadAllInboxes();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, isAdmin]);
 
   if (status === "loading" || loading) {
     return (
@@ -235,6 +270,16 @@ export default function AdminPage() {
           Manajemen User ({users.length})
         </button>
         <button
+          onClick={() => setActiveTab("inboxes")}
+          className={`pb-3 px-4 text-sm font-medium border-b-2 transition ${
+            activeTab === "inboxes"
+              ? "border-blue-500 text-white"
+              : "border-transparent text-zinc-400 hover:text-white"
+          }`}
+        >
+          Monitor Inbox ({stats?.totalInboxes ?? 0})
+        </button>
+        <button
           onClick={() => setActiveTab("system")}
           className={`pb-3 px-4 text-sm font-medium border-b-2 transition ${
             activeTab === "system"
@@ -326,6 +371,86 @@ export default function AdminPage() {
               </table>
             </div>
           </div>
+        </div>
+      ) : activeTab === "inboxes" ? (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 bg-zinc-900 px-4 py-2.5 rounded-xl border border-zinc-800">
+            <Search className="h-4 w-4 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="Cari inbox berdasarkan alamat atau prefix..."
+              value={inboxSearch}
+              onChange={(e) => setInboxSearch(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && loadAllInboxes()}
+              className="bg-transparent text-sm text-white placeholder-zinc-500 focus:outline-none flex-1"
+            />
+            <button
+              onClick={loadAllInboxes}
+              className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+              title="Refresh"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </button>
+          </div>
+
+          {loadingInboxes ? (
+            <div className="py-12 flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+            </div>
+          ) : allInboxes.length === 0 ? (
+            <div className="py-12 text-center text-sm text-zinc-500">
+              Tidak ada inbox ditemukan
+            </div>
+          ) : (
+            <div className="grid gap-3">
+              {allInboxes.map((inbox) => (
+                <a
+                  key={inbox.id}
+                  href={`/?inbox=${encodeURIComponent(inbox.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition group"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-mono text-sm text-white group-hover:text-blue-400 transition truncate">
+                        {inbox.address}
+                      </div>
+                      <div className="flex items-center gap-2 mt-1.5 text-xs text-zinc-500">
+                        {inbox.user ? (
+                          <span>
+                            {inbox.user.name || inbox.user.email}
+                          </span>
+                        ) : (
+                          <span>Anonim</span>
+                        )}
+                        <span>•</span>
+                        <span className={inbox.isCustom ? "text-purple-400" : ""}>
+                          {inbox.isCustom ? "Custom" : "Random"}
+                        </span>
+                        <span>•</span>
+                        <span>
+                          {new Date(inbox.createdAt).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                        {inbox.expiresAt && new Date(inbox.expiresAt) < new Date() && (
+                          <>
+                            <span>•</span>
+                            <span className="text-red-400">Expired</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <Eye className="h-4 w-4 text-zinc-600 group-hover:text-blue-400 transition shrink-0" />
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <div className="space-y-6">

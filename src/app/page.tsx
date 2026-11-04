@@ -165,12 +165,21 @@ export default function HomePage() {
     }
     loadDomains();
 
-    // Check localStorage for saved active inbox
-    const saved = localStorage.getItem("ocmail_active_inbox");
-    if (saved) {
-      setActiveAddress(saved);
+    // Check URL query param for inbox override (from admin monitor)
+    const urlParams = new URLSearchParams(window.location.search);
+    const inboxParam = urlParams.get("inbox");
+    
+    if (inboxParam) {
+      setActiveAddress(inboxParam);
+      localStorage.setItem("ocmail_active_inbox", inboxParam);
     } else {
-      handleCreateInbox(false);
+      // Check localStorage for saved active inbox
+      const saved = localStorage.getItem("ocmail_active_inbox");
+      if (saved) {
+        setActiveAddress(saved);
+      } else {
+        handleCreateInbox(false);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
