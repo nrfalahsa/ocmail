@@ -13,13 +13,15 @@ export function extractOtp(subject = "", body = ""): string {
   // 1. Check subject with keyword pattern first
   const subjectKeywordMatch = safeSubject.match(KEYWORD_OTP_RE);
   if (subjectKeywordMatch && subjectKeywordMatch[1]) {
-    return subjectKeywordMatch[1].replace(/\D/g, "");
+    const candidate = subjectKeywordMatch[1].replace(/\D/g, "");
+    if (isValidOtp(candidate)) return candidate;
   }
 
   // 2. Check subject with standalone pattern
   const subjectStandaloneMatch = safeSubject.match(STANDALONE_OTP_RE);
   if (subjectStandaloneMatch && subjectStandaloneMatch[1]) {
-    return subjectStandaloneMatch[1].replace(/\D/g, "");
+    const candidate = subjectStandaloneMatch[1].replace(/\D/g, "");
+    if (isValidOtp(candidate)) return candidate;
   }
 
   // 3. Strip HTML tags from body before scanning to avoid matching hex codes like #333333
@@ -33,14 +35,23 @@ export function extractOtp(subject = "", body = ""): string {
   // 4. Check body with keyword pattern
   const bodyKeywordMatch = cleanedBody.match(KEYWORD_OTP_RE);
   if (bodyKeywordMatch && bodyKeywordMatch[1]) {
-    return bodyKeywordMatch[1].replace(/\D/g, "");
+    const candidate = bodyKeywordMatch[1].replace(/\D/g, "");
+    if (isValidOtp(candidate)) return candidate;
   }
 
   // 5. Check body standalone
   const bodyStandaloneMatch = cleanedBody.match(STANDALONE_OTP_RE);
   if (bodyStandaloneMatch && bodyStandaloneMatch[1]) {
-    return bodyStandaloneMatch[1].replace(/\D/g, "");
+    const candidate = bodyStandaloneMatch[1].replace(/\D/g, "");
+    if (isValidOtp(candidate)) return candidate;
   }
 
   return "";
+}
+
+function isValidOtp(digits: string): boolean {
+  if (!digits || digits.length < 4) return false;
+  // Reject if all digits are the same (000000, 111111, etc)
+  const allSame = /^(.)\1+$/.test(digits);
+  return !allSame;
 }

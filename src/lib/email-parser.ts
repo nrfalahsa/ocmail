@@ -22,6 +22,22 @@ function decodeBase64(str: string): string {
   }
 }
 
+function decodeMimeHeader(str: string): string {
+  // RFC 2047 encoded-word: =?charset?encoding?encoded-text?=
+  return str.replace(/=\?([^?]+)\?([BQbq])\?([^?]+)\?=/g, (_, charset, encoding, text) => {
+    try {
+      if (encoding.toUpperCase() === "B") {
+        return Buffer.from(text, "base64").toString("utf-8");
+      } else if (encoding.toUpperCase() === "Q") {
+        // Quoted-printable with underscore for space
+        const cleaned = text.replace(/_/g, " ");
+        return decodeQuotedPrintable(cleaned);
+      }
+    } catch {}
+    return text;
+  });
+}
+
 export interface ParsedEmail {
   from?: string;
   subject?: string;
@@ -45,10 +61,10 @@ export function parseRawEmail(rawBody: string): ParsedEmail {
 
   // Extract display from header if available
   const fromMatch = headerSection.match(/^from:\s*([^\r\n]+)/im);
-  const parsedFrom = fromMatch ? fromMatch[1].trim() : undefined;
+  const parsedFrom = fromMatch ? decodeMimeHeader(fromMatch[1].trim()) : undefined;
 
   const subjectMatch = headerSection.match(/^subject:\s*([^\r\n]+)/im);
-  const parsedSubject = subjectMatch ? subjectMatch[1].trim() : undefined;
+  const parsedSubject = subjectMatch ? decodeMimeHeader(subjectMatch[1].trim()) : undefined;
 
   // Check Content-Type & Transfer-Encoding
   const contentTypeMatch = headerSection.match(/content-type:\s*([^;\r\n]+)/i);
