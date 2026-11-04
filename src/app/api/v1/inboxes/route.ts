@@ -36,8 +36,22 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? "127.0.0.1";
+  // Extract real IP - x-forwarded-for can be comma-separated list
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  const realIp = req.headers.get("x-real-ip");
+  let ip = "127.0.0.1";
+  
+  if (forwardedFor) {
+    // Take first IP from comma-separated list
+    ip = forwardedFor.split(",")[0].trim();
+  } else if (realIp) {
+    ip = realIp;
+  }
+  
+  console.log(`[RateLimit] IP detected: ${ip}, identifier: inbox_create:${ip}`);
   const { success } = await checkRateLimit(`inbox_create:${ip}`);
+  console.log(`[RateLimit] Check result: ${success ? "ALLOWED" : "BLOCKED"}`);
+  
   if (!success) {
     return NextResponse.json({ error: "Rate limit exceeded. Try again later." }, { status: 429 });
   }
