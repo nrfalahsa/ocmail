@@ -7,12 +7,27 @@ import sanitizeHtml from "sanitize-html";
 
 function decodeQuotedPrintable(str: string): string {
   // Replace soft line breaks
-  let cleaned = str.replace(/=\r?\n/g, "");
-  // Replace =XX hex
-  cleaned = cleaned.replace(/=([0-9A-Fa-f]{2})/g, (_, hex) => {
-    return String.fromCharCode(parseInt(hex, 16));
-  });
-  return cleaned;
+  const cleaned = str.replace(/=\r?\n/g, "");
+  
+  // Collect hex bytes
+  const bytes: number[] = [];
+  let i = 0;
+  while (i < cleaned.length) {
+    if (cleaned[i] === '=' && /[0-9A-Fa-f]{2}/.test(cleaned.slice(i + 1, i + 3))) {
+      bytes.push(parseInt(cleaned.slice(i + 1, i + 3), 16));
+      i += 3;
+    } else {
+      bytes.push(cleaned.charCodeAt(i));
+      i++;
+    }
+  }
+  
+  // Decode UTF-8 byte array
+  try {
+    return Buffer.from(bytes).toString('utf-8');
+  } catch {
+    return cleaned;
+  }
 }
 
 function decodeBase64(str: string): string {
